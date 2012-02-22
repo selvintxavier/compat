@@ -1,5 +1,6 @@
 /*
  * Copyright 2012  Luis R. Rodriguez <mcgrof@frijolero.org>
+ * Copyright (c) 2012 Mellanox Technologies. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -10,6 +11,8 @@
 
 #include <linux/kernel.h>
 #include <linux/device.h>
+#include <linux/ethtool.h>
+#include <linux/rtnetlink.h>
 
 int __netdev_printk(const char *level, const struct net_device *dev,
 			   struct va_format *vaf)
@@ -32,3 +35,16 @@ int __netdev_printk(const char *level, const struct net_device *dev,
 	return r;
 }
 EXPORT_SYMBOL(__netdev_printk);
+
+int __ethtool_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
+{
+        ASSERT_RTNL();
+
+        if (!dev->ethtool_ops || !dev->ethtool_ops->get_settings)
+                return -EOPNOTSUPP;
+
+        memset(cmd, 0, sizeof(struct ethtool_cmd));
+        cmd->cmd = ETHTOOL_GSET;
+        return dev->ethtool_ops->get_settings(dev, cmd);
+}
+EXPORT_SYMBOL(__ethtool_get_settings);

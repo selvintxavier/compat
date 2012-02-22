@@ -7,8 +7,12 @@
 
 #include <linux/skbuff.h>
 #include <linux/dma-mapping.h>
+#include <linux/ethtool.h>
 
 #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
+
+extern int __ethtool_get_settings(struct net_device *dev,
+				  struct ethtool_cmd *cmd);
 
 /**
  * skb_frag_page - retrieve the page refered to by a paged fragment
