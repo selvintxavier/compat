@@ -10,6 +10,25 @@
 
 #define SDIO_CLASS_BT_AMP	0x09	/* Type-A Bluetooth AMP interface */
 
+#define VLAN_N_VID              4096
+
+/*
+ *     netif_set_real_num_rx_queues - set actual number of RX queues used
+ *     @dev: Network device
+ *     @rxq: Actual number of RX queues
+ *
+ *     This function actully sets the real_num_rx_queues field in struct
+ *     net_device. Since real_num_rx_queues field is not present in net_device
+ *     structure in 2.6.37 kernel making this function to set that field is not
+ *     possible. Hence adding this function to avoid changes in driver source
+ *     code and making this function to always return success.
+ */
+static inline int netif_set_real_num_rx_queues(struct net_device *dev,
+        unsigned int rxq)
+{
+    return 0;
+}
+
 extern struct kobj_ns_type_operations net_ns_type_operations;
 
 /* mask skb_checksum_none_assert as RHEL6 backports this */
