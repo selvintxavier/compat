@@ -17,8 +17,6 @@
 #define  SDIO_BUS_ECSI		0x20	/* Enable continuous SPI interrupt */
 #define  SDIO_BUS_SCSI		0x40	/* Support continuous SPI interrupt */
 
-#define netdev_hw_addr dev_mc_list
-
 static inline wait_queue_head_t *sk_sleep(struct sock *sk)
 {
 	return sk->sk_sleep;
