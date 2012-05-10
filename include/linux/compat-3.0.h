@@ -125,6 +125,22 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t 
 
 #endif
 
+/*
+ * enum ethtool_phys_id_state - indicator state for physical identification
+ * @ETHTOOL_ID_INACTIVE: Physical ID indicator should be deactivated
+ * @ETHTOOL_ID_ACTIVE: Physical ID indicator should be activated
+ * @ETHTOOL_ID_ON: LED should be turned on (used iff %ETHTOOL_ID_ACTIVE
+ *      is not supported)
+ * @ETHTOOL_ID_OFF: LED should be turned off (used iff %ETHTOOL_ID_ACTIVE
+ *      is not supported)
+ */
+enum ethtool_phys_id_state {
+    ETHTOOL_ID_INACTIVE,
+    ETHTOOL_ID_ACTIVE,
+    ETHTOOL_ID_ON,
+    ETHTOOL_ID_OFF
+};
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)) */
 
 #endif /* LINUX_3_0_COMPAT_H */
