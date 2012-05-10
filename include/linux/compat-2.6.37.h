@@ -154,6 +154,22 @@ static inline bool skb_has_frag_list(const struct sk_buff *skb)
 	return skb_shinfo(skb)->frag_list != NULL;
 }
 
+/* boolean flags controlling per-interface behavior characteristics.
+ * When reading, the flag indicates whether or not a certain behavior
+ * is enabled/present.  When writing, the flag indicates whether
+ * or not the driver should turn on (set) or off (clear) a behavior.
+ *
+ * Some behaviors may read-only (unconditionally absent or present).
+ * If such is the case, return EINVAL in the set-flags operation if the
+ * flag differs from the read-only value.
+ *
+ * Adding missing enums for ethtool_flags in 2.6.32 kernel.
+ */
+enum additional_ethtool_flags {
+    ETH_FLAG_TXVLAN         = (1 << 7),     /* TX VLAN offload enabled */
+    ETH_FLAG_RXVLAN         = (1 << 8),     /* RX VLAN offload enabled */
+};
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)) */
 
 #endif /* LINUX_26_37_COMPAT_H */
