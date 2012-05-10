@@ -90,6 +90,15 @@ static inline int is_unicast_ether_addr(const u8 *addr)
 	return !is_multicast_ether_addr(addr);
 }
 
+static inline int netdev_queue_numa_node_read(const struct netdev_queue *q)
+{
+#if defined(CONFIG_XPS) && defined(CONFIG_NUMA)
+    return q->numa_node;
+#else
+    return NUMA_NO_NODE;
+#endif
+}
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,38)) */
 
 #endif /* LINUX_26_38_COMPAT_H */
