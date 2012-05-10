@@ -170,6 +170,9 @@ static inline long __must_check IS_ERR_OR_NULL(const void *ptr)
 #define for_each_netdev_rcu(net, d)             \
                 list_for_each_entry_rcu(d, &(net)->dev_base_head, dev_list)
 
+#define IPV4_FLOW               0x10    /* hash only */
+#define IPV6_FLOW               0x11    /* hash only */
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)) */
 
 #endif /* LINUX_26_33_COMPAT_H */
