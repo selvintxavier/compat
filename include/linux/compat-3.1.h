@@ -6,6 +6,22 @@
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0))
 
 #include <linux/security.h>
+#include <net/dst.h>
+
+static inline struct neighbour *dst_get_neighbour(struct dst_entry *dst)
+{
+	return dst->neighbour;
+}
+
+static inline void dst_set_neighbour(struct dst_entry *dst, struct neighbour *neigh)
+{
+	dst->neighbour = neigh;
+}
+
+static inline struct neighbour *dst_get_neighbour_raw(struct dst_entry *dst)
+{
+	return rcu_dereference_raw(dst->neighbour);
+}
 
 #define genl_dump_check_consistent(cb, user_hdr, family)
 
