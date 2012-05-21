@@ -14,6 +14,7 @@
 #endif
 #include <linux/firmware.h>
 #include <linux/input.h>
+#include <linux/sched.h>
 
 #if defined(CONFIG_COMPAT_FIRMWARE_CLASS)
 #define release_firmware compat_release_firmware
@@ -172,6 +173,8 @@ static inline long __must_check IS_ERR_OR_NULL(const void *ptr)
 
 #define IPV4_FLOW               0x10    /* hash only */
 #define IPV6_FLOW               0x11    /* hash only */
+
+#define tsk_cpus_allowed(tsk) (&(tsk)->cpus_allowed)
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)) */
 
