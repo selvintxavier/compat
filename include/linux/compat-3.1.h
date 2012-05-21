@@ -23,6 +23,12 @@ static inline struct neighbour *dst_get_neighbour_raw(struct dst_entry *dst)
 	return rcu_dereference_raw(dst->neighbour);
 }
 
+#ifndef NEED_MIN_DUMP_ALLOC_ARG
+#include <linux/netlink.h>
+/* remove last arg */
+#define netlink_dump_start(a, b, c, d, e, f) netlink_dump_start(a, b, c, d, e)
+#endif
+
 #define genl_dump_check_consistent(cb, user_hdr, family)
 
 #define IFF_TX_SKB_SHARING	0x10000	/* The interface supports sharing
