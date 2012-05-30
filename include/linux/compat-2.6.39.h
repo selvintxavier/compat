@@ -8,6 +8,7 @@
 #include <linux/tty.h>
 #include <linux/irq.h>
 #include <linux/kernel.h>
+#include <linux/netdevice.h>
 
 #define tiocmget(tty) tiocmget(tty, NULL)
 #define tiocmset(tty, set, clear) tiocmset(tty, NULL, set, clear)
@@ -16,6 +17,10 @@
 extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
 
+static inline int netif_is_bond_slave(struct net_device *dev)
+{
+	return dev->flags & IFF_SLAVE && dev->priv_flags & IFF_BONDING;
+}
 static inline int irq_set_irq_wake(unsigned int irq, unsigned int on)
 {
 	return set_irq_wake(irq, on);
