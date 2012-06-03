@@ -1,6 +1,12 @@
 #include <linux/version.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
 #include_next <linux/llist.h>
+
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+#include_next <linux/llist.h>
+extern bool llist_add_batch(struct llist_node *new_first,
+			    struct llist_node *new_last,
+			    struct llist_head *head);
 #else
 
 #ifndef LLIST_H
@@ -190,4 +196,4 @@ extern bool llist_add_batch(struct llist_node *new_first,
 extern struct llist_node *llist_del_first(struct llist_head *head);
 
 #endif /* LLIST_H */
-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0) */
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */

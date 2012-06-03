@@ -30,32 +30,6 @@
 #include <asm/system.h>
 
 /**
- * llist_add_batch - add several linked entries in batch
- * @new_first:	first entry in batch to be added
- * @new_last:	last entry in batch to be added
- * @head:	the head for your lock-less list
- *
- * Return whether list is empty before adding.
- */
-bool llist_add_batch(struct llist_node *new_first, struct llist_node *new_last,
-		     struct llist_head *head)
-{
-	struct llist_node *entry, *old_entry;
-
-	entry = head->first;
-	for (;;) {
-		old_entry = entry;
-		new_last->next = entry;
-		entry = cmpxchg(&head->first, old_entry, new_first);
-		if (entry == old_entry)
-			break;
-	}
-
-	return old_entry == NULL;
-}
-EXPORT_SYMBOL_GPL(llist_add_batch);
-
-/**
  * llist_del_first - delete the first entry of lock-less list
  * @head:	the head for your lock-less list
  *

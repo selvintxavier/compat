@@ -13,6 +13,7 @@
 #include <linux/device.h>
 #include <linux/ethtool.h>
 #include <linux/rtnetlink.h>
+#include <linux/llist.h>
 
 int __netdev_printk(const char *level, const struct net_device *dev,
 			   struct va_format *vaf)
@@ -48,3 +49,30 @@ int __ethtool_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
         return dev->ethtool_ops->get_settings(dev, cmd);
 }
 EXPORT_SYMBOL(__ethtool_get_settings);
+
+/**
+ * llist_add_batch - add several linked entries in batch
+ * @new_first:	first entry in batch to be added
+ * @new_last:	last entry in batch to be added
+ * @head:	the head for your lock-less list
+ *
+ * Return whether list is empty before adding.
+ */
+bool llist_add_batch(struct llist_node *new_first, struct llist_node *new_last,
+		     struct llist_head *head)
+{
+	struct llist_node *entry, *old_entry;
+
+	entry = head->first;
+	for (;;) {
+		old_entry = entry;
+		new_last->next = entry;
+		entry = cmpxchg(&head->first, old_entry, new_first);
+		if (entry == old_entry)
+			break;
+	}
+
+	return old_entry == NULL;
+}
+EXPORT_SYMBOL_GPL(llist_add_batch);
+
