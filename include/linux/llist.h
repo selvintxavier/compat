@@ -7,6 +7,11 @@
 extern bool llist_add_batch(struct llist_node *new_first,
 			    struct llist_node *new_last,
 			    struct llist_head *head);
+extern struct llist_node *llist_del_first(struct llist_head *head);
+#else
+
+#ifdef CONFIG_COMPAT_SLES_11_2
+#include_next <linux/llist.h>
 #else
 
 #ifndef LLIST_H
@@ -193,7 +198,9 @@ static inline struct llist_node *llist_del_all(struct llist_head *head)
 extern bool llist_add_batch(struct llist_node *new_first,
 			    struct llist_node *new_last,
 			    struct llist_head *head);
+
 extern struct llist_node *llist_del_first(struct llist_head *head);
 
+#endif /* CONFIG_COMPAT_SLES_11_2 */
 #endif /* LLIST_H */
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */

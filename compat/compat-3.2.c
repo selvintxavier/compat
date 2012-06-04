@@ -50,6 +50,7 @@ int __ethtool_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
 }
 EXPORT_SYMBOL(__ethtool_get_settings);
 
+#ifndef CONFIG_COMPAT_SLES_11_2
 /**
  * llist_add_batch - add several linked entries in batch
  * @new_first:	first entry in batch to be added
@@ -76,3 +77,37 @@ bool llist_add_batch(struct llist_node *new_first, struct llist_node *new_last,
 }
 EXPORT_SYMBOL_GPL(llist_add_batch);
 
+/**
+ * llist_del_first - delete the first entry of lock-less list
+ * @head:	the head for your lock-less list
+ *
+ * If list is empty, return NULL, otherwise, return the first entry
+ * deleted, this is the newest added one.
+ *
+ * Only one llist_del_first user can be used simultaneously with
+ * multiple llist_add users without lock.  Because otherwise
+ * llist_del_first, llist_add, llist_add (or llist_del_all, llist_add,
+ * llist_add) sequence in another user may change @head->first->next,
+ * but keep @head->first.  If multiple consumers are needed, please
+ * use llist_del_all or use lock between consumers.
+ */
+struct llist_node *llist_del_first(struct llist_head *head)
+{
+	struct llist_node *entry, *old_entry, *next;
+
+	entry = head->first;
+	for (;;) {
+		if (entry == NULL)
+			return NULL;
+		old_entry = entry;
+		next = entry->next;
+		entry = cmpxchg(&head->first, old_entry, next);
+		if (entry == old_entry)
+			break;
+	}
+
+	return entry;
+}
+EXPORT_SYMBOL_GPL(llist_del_first);
+
+#endif /* CONFIG_COMPAT_SLES_11_2 */
