@@ -9,12 +9,16 @@
 #include <linux/if_ether.h>
 #include <linux/usb.h>
 #include <linux/types.h>
+#include <linux/types.h>
+#include <linux/cpumask.h>
 
 #ifndef ETH_P_PAE
 #define ETH_P_PAE 0x888E      /* Port Access Entity (IEEE 802.1X) */
 #endif
 
 #include <linux/pci.h>
+
+typedef struct cpumask { DECLARE_BITMAP(bits, NR_CPUS); } compat_cpumask_t;
 
 #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
 /*
@@ -210,6 +214,10 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
 	}
 }
 
+#define skb_queue_walk_from(queue, skb)						\
+		for (; skb != (struct sk_buff *)(queue);			\
+		     skb = skb->next)
+
 #ifndef DECLARE_TRACE
 
 #define TP_PROTO(args...)	args
@@ -242,7 +250,7 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
 
 unsigned long round_jiffies_up(unsigned long j);
 
-extern void skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
+extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
 			    int off, int size);
 
 #define wake_up_interruptible_poll(x, m)			\

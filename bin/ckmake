@@ -25,11 +25,16 @@ UNDERLINE="\033[02m"
 KERNEL_DIR="/lib/modules"
 KLIBS=""
 LOG="ckmake.log"
+TIME="0"
+QUIET=""
+ARGS=""
+
+RET=""
 
 LSB_RED_ID=$(/usr/bin/lsb_release -i -s)
 case $LSB_RED_ID in
 "Ubuntu")
-	for i in $(find /lib/modules/ -type d -name \*generic\* | sort -n -r); do
+	for i in $(find /lib/modules/ -type d -name \*generic\* | sort -n -r | grep -v -E '\-[[:alnum:]]{1,2}\-'); do
 		KLIBS="$KLIBS $i"
 	done
 	;;
@@ -39,27 +44,101 @@ case $LSB_RED_ID in
 	;;
 esac
 
+function tee_color_split()
+{
+	while read; do
+		echo -e $REPLY | ./scripts/skip-colors >> $LOG
+		echo -e $REPLY
+	done
+}
+
+function log_try_kernel()
+{
+	echo -en "Trying kernel ${BLUE}"
+	printf "%40s\t" "${1}"
+	echo -en "${NORMAL}"
+}
+
+function usage()
+{
+	echo -e "Usage: $0 [-t] <optional-target>"
+	echo -e "-t   will run: 'time ckmake; time ckmake' account for"
+	echo -e "     benchmark how long it takes to compile without ccache"
+	echo -e "     and a run after cache kicks in"
+	echo -e "-q   will ask ckmake to run make with -s to only output errors"
+	echo
+	echo -e "<optional-target>  is the arguments you want to pass to the"
+	echo -e "child make call that ckmake will use. For example if you have"
+	echo -e "a target 'linux' on your Makefile you can run 'cmake linux'"
+}
+
+for i in $@ ; do
+	case $1 in
+		"-h")
+			usage
+			exit 1
+			;;
+		"--help")
+			usage
+			exit 1
+			;;
+		"-t")
+			TIME="1"
+			shift
+			;;
+		"-s")
+			QUIET="-s"
+			shift
+			;;
+		*)
+			ARGS="${ARGS} $1"
+			shift
+	esac
+done
+
+function run_ckmake()
+{
+	for i in $KLIBS; do
+		KERNEL=$(basename $i)
+		DIR=${i}/build/
+		echo -e "--------------------------------------------" >> $LOG
+
+		if [[ ! -d $DIR ]]; then
+			continue
+		fi
+
+		# We cannot use tee_color_split() as bash read only spits
+		# out output when a newline comes in. We can modif IFS but
+		# I am still not sure how to do this properly.
+		log_try_kernel $KERNEL | ./scripts/skip-colors >> $LOG
+		log_try_kernel $KERNEL
+
+		ionice -c 3 nice -n 20 make $QUIET KLIB=$DIR KLIB_BUILD=$DIR -j6 -Wunused-but-set-variable $ARGS &>> $LOG
+		CUR_RET=$?
+
+		if [[ $RET = "" ]]; then
+			RET=$CUR_RET
+		fi
+
+		if [[ $CUR_RET -eq 0 ]]; then
+			echo -e "${GREEN}[OK]${NORMAL}" | tee_color_split
+		else
+			echo -e "${RED}[FAILED]${NORMAL}" | tee_color_split
+			RET=$CUR_RET
+		fi
+
+		nice make clean KLIB=$DIR KLIB_BUILD=$DIR 2>&1 >> $LOG
+	done
+}
+
 nice make clean 2>&1 > $LOG
 
-for i in $KLIBS; do
-	KERNEL=$(basename $i)
-	DIR=${i}/build/
-	echo -e "--------------------------------------------" >> $LOG
+if [[ $TIME != "1" ]]; then
+	run_ckmake
+	exit $RET
+fi
 
-	if [[ ! -d $DIR ]]; then
-		continue
-	fi
+time $0 $QUIET $ARGS
+time $0 $QUIET $ARGS | egrep "real|user|sys"
 
-	echo -en "Trying kernel ${BLUE}" | tee -a $LOG
-	printf "%40s\t" "${KERNEL}" | tee -a $LOG
-	echo -en "${NORMAL}" | tee -a $LOG
-
-	ionice -c 3 nice -n 20 make KLIB=$DIR KLIB_BUILD=$DIR -j6 -Wunused-but-set-variable &>> $LOG
-	if [[ $? -eq 0 ]]; then
-		echo -e "${GREEN}[OK]${NORMAL}" | tee -a $LOG
-	else
-		echo -e "${RED}[FAILED]${NORMAL}" | tee -a $LOG
-	fi
-
-	nice make clean KLIB=$DIR KLIB_BUILD=$DIR 2>&1 >> $LOG
-done
+exit $RET
