@@ -9,7 +9,6 @@
 #else
 #include <linux/autoconf.h>
 #endif
-#include <linux/compat_autoconf.h>
 #include <linux/init.h>
 
 /*
