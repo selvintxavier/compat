@@ -8,6 +8,7 @@
  * Compatibility file for Linux wireless for kernels 3.1.
  */
 
+#if ! defined(RHEL_MINOR) || (RHEL_MINOR < 3)
 #include <linux/idr.h>
 
 static DEFINE_SPINLOCK(simple_ida_lock);
@@ -80,4 +81,5 @@ void ida_simple_remove(struct ida *ida, unsigned int id)
 }
 EXPORT_SYMBOL(ida_simple_remove);
 /* source lib/idr.c */
+#endif
 

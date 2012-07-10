@@ -8,6 +8,7 @@
  * Compatibility file for Linux wireless for kernels 2.6.38.
  */
 
+#if !defined(RHEL_MINOR) || (RHEL_MINOR < 3)
 #include <linux/compat.h>
 #include <linux/module.h>
 #include <linux/bug.h>
@@ -48,3 +49,4 @@ struct ewma *ewma_add(struct ewma *avg, unsigned long val)
 }
 EXPORT_SYMBOL_GPL(ewma_add);
 
+#endif
