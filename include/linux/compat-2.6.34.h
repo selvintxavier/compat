@@ -244,7 +244,9 @@ do {							\
  *	enabled.  Lockdep gives a nice error when your attribute is
  *	added to sysfs if you don't have this.
  */
+#ifndef sysfs_bin_attr_init
 #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
+#endif /* sysfs_bin_attr_init */
 
 #define usb_alloc_coherent(dev, size, mem_flags, dma) usb_buffer_alloc(dev, size, mem_flags, dma)
 #define usb_free_coherent(dev, size, addr, dma) usb_buffer_free(dev, size, addr, dma)

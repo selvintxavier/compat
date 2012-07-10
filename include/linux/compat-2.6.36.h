@@ -94,12 +94,14 @@ struct pm_qos_request_list {
 
 #endif
 
+#ifdef CONFIG_COMPAT_NO_PRINTK_NEEDED
 /*
  * Dummy printk for disabled debugging statements to use whilst maintaining
  * gcc's format and side-effect checking.
  */
 static inline __attribute__ ((format (printf, 1, 2)))
 int no_printk(const char *s, ...) { return 0; }
+#endif /* CONFIG_COMPAT_NO_PRINTK_NEEDED */
 
 #ifndef alloc_workqueue
 #define alloc_workqueue(name, flags, max_active) __create_workqueue(name, flags, max_active, 0)

@@ -32,6 +32,9 @@ static inline bool ip_is_fragment(const struct iphdr *iph)
 	return (iph->frag_off & htons(IP_MF | IP_OFFSET)) != 0;
 }
 
+/* mask __netdev_alloc_skb_ip_align as RHEL6.3 backports it */
+#define __netdev_alloc_skb_ip_align(a, b, c) compat__netdev_alloc_skb_ip_align(a, b, c)
+
 static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev,
 							  unsigned int length, gfp_t gfp)
 {

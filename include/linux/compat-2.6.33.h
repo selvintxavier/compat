@@ -56,11 +56,15 @@ static inline void compat_release_firmware(const struct firmware *fw)
 #define KEY_RFKILL		247	/* Key that controls all radios */
 #endif
 
+#ifndef IFF_DONT_BRIDGE
 #define IFF_DONT_BRIDGE 0x800		/* disallow bridging this ether dev */
+#endif /* IFF_DONT_BRIDGE */
 /* source: include/linux/if.h */
 
 /* this will never happen on older kernels */
+#ifndef NETDEV_POST_INIT
 #define NETDEV_POST_INIT 0xffff
+#endif /* NETDEV_POST_INIT */
 
 /* mask netdev_alloc_skb_ip_align as debian squeeze also backports this */
 #define netdev_alloc_skb_ip_align(a, b) compat_netdev_alloc_skb_ip_align(a, b)

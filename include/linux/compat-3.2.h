@@ -18,6 +18,8 @@
 extern int __ethtool_get_settings(struct net_device *dev,
 				  struct ethtool_cmd *cmd);
 
+#ifdef CONFIG_COMPAT_SKB_FRAG_NEEDED
+
 /**
  * skb_frag_page - retrieve the page refered to by a paged fragment
  * @frag: the paged fragment
@@ -112,6 +114,8 @@ static inline void skb_frag_size_sub(skb_frag_t *frag, int delta)
 {
 	frag->size -= delta;
 }
+
+#endif /* CONFIG_COMPAT_SKB_FRAG_NEEDED */
 
 static inline char *hex_byte_pack(char *buf, u8 byte)
 {

@@ -22,6 +22,8 @@
  * was modified in the kernel itself to support this. We
  * treat the system as uni-processor in this case.
  */
+#define irq_set_affinity_hint(a, b) compat_irq_set_affinity_hint(a, b)
+
 static inline int irq_set_affinity_hint(unsigned int irq,
 					const struct cpumask *m)
 {
@@ -43,6 +45,9 @@ int hex_to_bin(char ch);
 extern loff_t noop_llseek(struct file *file, loff_t offset, int origin);
 
 #define pm_qos_request(_qos) pm_qos_requirement(_qos)
+
+/* mask hex_to_bin as RHEL6.3 backports this */
+#define usb_pipe_endpoint(a, b) compat_usb_pipe_endpoint(a, b)
 
 static inline struct usb_host_endpoint *
 usb_pipe_endpoint(struct usb_device *dev, unsigned int pipe)
