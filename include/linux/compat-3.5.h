@@ -246,6 +246,9 @@ static inline struct ctl_table_header *register_net_sysctl(struct net *net,
 {
 	return NULL;
 }
+
+extern const __u8 ip_tos2prio[16];
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)) */
 
 #endif /* LINUX_3_5_COMPAT_H */
