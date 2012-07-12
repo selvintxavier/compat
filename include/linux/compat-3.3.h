@@ -72,6 +72,16 @@ module_exit(__driver##_exit);
 	module_driver(__usb_driver, usb_register, \
 		       usb_deregister)
 
+static inline void netdev_tx_sent_queue(struct netdev_queue *dev_queue,
+				       unsigned int bytes)
+{
+}
+
+static inline void netdev_tx_completed_queue(struct netdev_queue *dev_queue,
+					    unsigned pkts, unsigned bytes)
+{
+}
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) */
 
 #endif /* LINUX_3_3_COMPAT_H */
