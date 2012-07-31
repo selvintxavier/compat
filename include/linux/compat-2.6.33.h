@@ -16,10 +16,12 @@
 #include <linux/input.h>
 #include <linux/sched.h>
 
+#if defined(CONFIG_COMPAT_FIRMWARE_CLASS)
 #if defined(CONFIG_FW_LOADER) || defined(CONFIG_FW_LOADER_MODULE)
 #define release_firmware compat_release_firmware
 #define request_firmware compat_request_firmware
 #define request_firmware_nowait compat_request_firmware_nowait
+#endif
 #endif
 
 #if defined(CONFIG_FW_LOADER) || defined(CONFIG_FW_LOADER_MODULE)
