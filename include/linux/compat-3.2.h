@@ -115,6 +115,17 @@ static inline void skb_frag_size_sub(skb_frag_t *frag, int delta)
 	frag->size -= delta;
 }
 
+/**
+ * __skb_frag_unref - release a reference on a paged fragment.
+ * @frag: the paged fragment
+ *
+ * Releases a reference on the paged fragment @frag.
+ */
+static inline void __skb_frag_unref(skb_frag_t *frag)
+{
+	put_page(skb_frag_page(frag));
+}
+
 #endif /* CONFIG_COMPAT_SKB_FRAG_NEEDED */
 
 static inline char *hex_byte_pack(char *buf, u8 byte)
