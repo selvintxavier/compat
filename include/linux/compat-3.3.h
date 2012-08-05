@@ -82,6 +82,16 @@ static inline void netdev_tx_completed_queue(struct netdev_queue *dev_queue,
 {
 }
 
+static inline void netdev_tx_reset_queue(struct netdev_queue *q)
+{
+#ifdef CONFIG_BQL
+	clear_bit(__QUEUE_STATE_STACK_XOFF, &q->state);
+	dql_reset(&q->dql);
+#endif
+}
+
+#define NETIF_F_LOOPBACK       (1 << 31) /* Enable loopback */
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) */
 
 #endif /* LINUX_3_3_COMPAT_H */
