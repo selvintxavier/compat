@@ -21,6 +21,7 @@
  *
  */
 
+#ifndef CONFIG_COMPAT_RHEL_6_4
 static inline int fault_in_multipages_writeable(char __user *uaddr, int size)
 {
         int ret = 0;
@@ -74,6 +75,7 @@ static inline int fault_in_multipages_readable(const char __user *uaddr,
 
         return ret;
 }
+#endif /* CONFIG_COMPAT_RHEL_6_4 */
 
 /* switcheroo is available on >= 2.6.34 */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
@@ -211,11 +213,13 @@ struct tc_fq_codel_xstats {
 #define tty_lock(__tty) tty_lock()
 #define tty_unlock(__tty) tty_unlock()
 
+#ifndef CONFIG_COMPAT_RHEL_6_4
 /* Backport ether_addr_equal */
 static inline bool ether_addr_equal(const u8 *addr1, const u8 *addr2)
 {
     return !compare_ether_addr(addr1, addr2);
 }
+#endif /* CONFIG_COMPAT_RHEL_6_4 */
 
 #define net_ratelimited_function(function, ...)			\
 do {								\

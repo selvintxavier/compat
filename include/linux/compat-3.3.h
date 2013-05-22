@@ -29,10 +29,13 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
 extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
 				   int headroom, gfp_t gfp_mask);
 
+#ifndef CONFIG_COMPAT_RHEL_6_4
 static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
 {
 	WARN_ON(1);
 }
+#endif /* CONFIG_COMPAT_RHEL_6_4 */
+
 #define NL80211_FEATURE_SK_TX_STATUS 0
 
 typedef u32 netdev_features_t;

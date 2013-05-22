@@ -49,10 +49,12 @@ static inline void eth_hw_addr_random(struct net_device *dev)
 #define NET_ADDR_RANDOM                1       /* address is generated randomly */
 #define NET_ADDR_STOLEN                2       /* address is stolen from other device */
 
+#ifndef CONFIG_COMPAT_RHEL_6_4
 static inline void eth_hw_addr_random(struct net_device *dev)
 {
 	random_ether_addr(dev->dev_addr);
 }
+#endif /* CONFIG_COMPAT_RHEL_6_4 */
 
 #else /* 2.6.36 and on */
 static inline void eth_hw_addr_random(struct net_device *dev)
