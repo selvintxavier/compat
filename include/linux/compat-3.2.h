@@ -18,6 +18,7 @@
 extern int __ethtool_get_settings(struct net_device *dev,
 				  struct ethtool_cmd *cmd);
 
+#ifndef CONFIG_COMPAT_SLES_11_3
 #ifdef CONFIG_COMPAT_SKB_FRAG_NEEDED
 
 /**
@@ -134,6 +135,7 @@ static inline char *hex_byte_pack(char *buf, u8 byte)
 	*buf++ = hex_asc_lo(byte);
 	return buf;
 }
+#endif /* CONFIG_COMPAT_SLES_11_3 */
 
 /* module_platform_driver() - Helper macro for drivers that don't do
  * anything special in module init/exit.  This eliminates a lot of

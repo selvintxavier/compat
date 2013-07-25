@@ -40,6 +40,7 @@ static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
 
 typedef u32 netdev_features_t;
 
+#ifndef CONFIG_COMPAT_SLES_11_3
 /* source include/linux/device.h */
 /**
  * module_driver() - Helper macro for drivers that don't do anything
@@ -94,6 +95,7 @@ static inline void netdev_tx_reset_queue(struct netdev_queue *q)
 }
 
 #define NETIF_F_LOOPBACK       (1 << 31) /* Enable loopback */
+#endif /* CONFIG_COMPAT_SLES_11_3 */
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) */
 

@@ -8,6 +8,7 @@
  * Compatibility file for Linux wireless for kernels 3.1.
  */
 
+#ifndef CONFIG_COMPAT_SLES_11_3
 #if ! defined(RHEL_MINOR) || (RHEL_MINOR < 3)
 #include <linux/idr.h>
 
@@ -82,4 +83,5 @@ void ida_simple_remove(struct ida *ida, unsigned int id)
 EXPORT_SYMBOL(ida_simple_remove);
 /* source lib/idr.c */
 #endif
+#endif /* CONFIG_COMPAT_SLES_11_3 */
 
