@@ -81,7 +81,9 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t 
 {
 	return kstrtoint_from_user(s, count, base, res);
 }
+#endif /* CONFIG_COMPAT_RHEL_6_4 */
 
+#ifndef kfree_rcu
 /* 
  * This adds a nested function everywhere kfree_rcu() was called. This
  * function frees the memory and is given as a function to call_rcu().
@@ -97,7 +99,7 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t 
 		}							\
 		call_rcu(&(data)->rcuhead, __kfree_rcu_fn);		\
 	} while (0)
-#endif /* CONFIG_COMPAT_RHEL_6_4 */
+#endif
 
 #ifdef MODULE
 

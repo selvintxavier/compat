@@ -287,11 +287,15 @@ static inline int usb_enable_autosuspend(struct usb_device *udev)
 static inline int usb_disable_autosuspend(struct usb_device *udev)
 { return 0; }
 
-#ifndef CONFIG_COMPAT_RHEL_6_4
+#ifndef rcu_dereference_protected
 #define rcu_dereference_protected(p, c) (p)
+#endif
+#ifndef rcu_access_pointer
 #define rcu_access_pointer(p)   ACCESS_ONCE(p)
+#endif
+#ifndef rcu_dereference_raw
 #define rcu_dereference_raw(p)	rcu_dereference(p)
-#endif /* CONFIG_COMPAT_RHEL_6_4 */
+#endif
 
 #define KEY_WPS_BUTTON		0x211	/* WiFi Protected Setup key */
 
