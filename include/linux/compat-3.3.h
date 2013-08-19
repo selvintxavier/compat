@@ -26,6 +26,7 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
 #endif
 #endif
 
+#define __pskb_copy LINUX_BACKPORT(__pskb_copy)
 extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
 				   int headroom, gfp_t gfp_mask);
 
@@ -76,16 +77,19 @@ module_exit(__driver##_exit);
 	module_driver(__usb_driver, usb_register, \
 		       usb_deregister)
 
+#define netdev_tx_sent_queue LINUX_BACKPORT(netdev_tx_sent_queue)
 static inline void netdev_tx_sent_queue(struct netdev_queue *dev_queue,
 				       unsigned int bytes)
 {
 }
 
+#define netdev_tx_completed_queue LINUX_BACKPORT(netdev_tx_completed_queue)
 static inline void netdev_tx_completed_queue(struct netdev_queue *dev_queue,
 					    unsigned pkts, unsigned bytes)
 {
 }
 
+#define netdev_tx_reset_queue LINUX_BACKPORT(netdev_tx_reset_queue)
 static inline void netdev_tx_reset_queue(struct netdev_queue *q)
 {
 #ifdef CONFIG_BQL
