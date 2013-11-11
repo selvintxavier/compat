@@ -8,7 +8,6 @@ obj-$(CONFIG_COMPAT_NET_SCH_FQ_CODEL) += sch_fq_codel.o
 compat-y += main.o
 
 # Compat kernel compatibility code
-compat-$(CONFIG_COMPAT_KERNEL_2_6_14) += compat-2.6.14.o
 compat-$(CONFIG_COMPAT_KERNEL_2_6_18) += compat-2.6.18.o
 compat-$(CONFIG_COMPAT_KERNEL_2_6_19) += compat-2.6.19.o
 compat-$(CONFIG_COMPAT_KERNEL_2_6_21) += compat-2.6.21.o
@@ -39,10 +38,11 @@ compat-$(CONFIG_COMPAT_KERNEL_2_6_39) += \
 compat-$(CONFIG_COMPAT_KERNEL_3_0) += compat-3.0.o
 compat-$(CONFIG_COMPAT_KERNEL_3_2) += compat-3.2.o
 compat-$(CONFIG_COMPAT_KERNEL_3_3) += \
-	compat-3.3.o \
-	flow_dissector.o
+	compat-3.3.o
 compat-$(CONFIG_COMPAT_KERNEL_3_4) += compat-3.4.o
 compat-$(CONFIG_COMPAT_KERNEL_3_5) += compat-3.5.o
+compat-$(CONFIG_COMPAT_KERNEL_3_6) += compat-3.6.o
+compat-$(CONFIG_COMPAT_KERNEL_3_7) += compat-3.7.o
 
 compat-$(CONFIG_COMPAT_CORDIC) += cordic.o
 compat-$(CONFIG_COMPAT_CRC8) += crc8.o

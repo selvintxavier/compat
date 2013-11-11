@@ -50,11 +50,13 @@ int sg_alloc_table_from_pages(struct sg_table *sgt,
  * 	Signed-off-by: Dave Airlie <airlied@redhat.com>
  */
 
+#ifndef  PCI_EXP_LNKCAP2
 #define  PCI_EXP_LNKCAP2 		44	/* Link Capability 2 */
 #define  PCI_EXP_LNKCAP2_SLS_2_5GB 	0x01	/* Current Link Speed 2.5GT/s */
 #define  PCI_EXP_LNKCAP2_SLS_5_0GB 	0x02	/* Current Link Speed 5.0GT/s */
 #define  PCI_EXP_LNKCAP2_SLS_8_0GB 	0x04	/* Current Link Speed 8.0GT/s */
 #define  PCI_EXP_LNKCAP2_CROSSLINK 	0x100 /* Crosslink supported */
+#endif
 
 #include <net/genetlink.h>
 #include <linux/etherdevice.h>
@@ -65,6 +67,7 @@ int sg_alloc_table_from_pages(struct sg_table *sgt,
  *
  * Assign the broadcast address to the given address array.
  */
+#define eth_broadcast_addr LINUX_BACKPORT(eth_broadcast_addr)
 static inline void eth_broadcast_addr(u8 *addr)
 {
 	memset(addr, 0xff, ETH_ALEN);

@@ -17,6 +17,14 @@
 
 #define VM_DONTDUMP    VM_NODUMP
 
+#ifndef INIT_DEFERRABLE_WORK
+#define INIT_DEFERRABLE_WORK(_work, _func) INIT_DELAYED_WORK_DEFERRABLE(_work, _func)
+#endif
+
+#ifndef DECLARE_DEFERRABLE_WORK
+#define DECLARE_DEFERRABLE_WORK(n, f) DECLARE_DEFERRED_WORK(n, f)
+#endif
+
 #ifdef CONFIG_USER_NS
 
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
@@ -105,7 +113,7 @@ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
 #define MAX_IDR_MASK (MAX_IDR_BIT - 1)
 
 /* IPoIB section */
-
+#ifndef IFLA_IPOIB_MAX
 enum {
 	IFLA_IPOIB_UNSPEC,
 	IFLA_IPOIB_PKEY,
@@ -120,6 +128,7 @@ enum {
 };
 
 #define IFLA_IPOIB_MAX (__IFLA_IPOIB_MAX - 1)
+#endif
 
 #define FMODE_PATH		((__force fmode_t)0x4000)
 
