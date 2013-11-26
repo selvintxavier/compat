@@ -2,7 +2,9 @@
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
 #include_next <linux/llist.h>
 
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+#else
+
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,1,0)) || (defined(CONFIG_SUSE_KERNEL) && defined(CONFIG_COMPAT_SLES_11_2))
 #include_next <linux/llist.h>
 #define llist_add_batch LINUX_BACKPORT(llist_add_batch)
 extern bool llist_add_batch(struct llist_node *new_first,
@@ -10,10 +12,7 @@ extern bool llist_add_batch(struct llist_node *new_first,
 			    struct llist_head *head);
 #define llist_del_first LINUX_BACKPORT(llist_del_first)
 extern struct llist_node *llist_del_first(struct llist_head *head);
-#else
 
-#if (defined(CONFIG_COMPAT_SLES_11_2) || defined(CONFIG_COMPAT_SLES_11_3))
-#include_next <linux/llist.h>
 #else
 
 #ifndef LLIST_H
@@ -85,8 +84,12 @@ struct llist_node {
 	struct llist_node *next;
 };
 
+#ifndef LLIST_HEAD_INIT
 #define LLIST_HEAD_INIT(name)	{ NULL }
+#endif
+#ifndef LLIST_HEAD
 #define LLIST_HEAD(name)	struct llist_head name = LLIST_HEAD_INIT(name)
+#endif
 
 /**
  * init_llist_head - initialize lock-less list head
@@ -216,6 +219,6 @@ extern bool llist_add_batch(struct llist_node *new_first,
 #define llist_del_first LINUX_BACKPORT(llist_del_first)
 extern struct llist_node *llist_del_first(struct llist_head *head);
 
-#endif /* (defined(CONFIG_COMPAT_SLES_11_2) || defined(CONFIG_COMPAT_SLES_11_3)) */
+#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,1,0)) || (defined(CONFIG_SUSE_KERNEL) && defined(CONFIG_COMPAT_SLES_11_2)) */
 #endif /* LLIST_H */
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
