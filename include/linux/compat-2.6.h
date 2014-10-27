@@ -76,5 +76,8 @@ void backport_dependency_symbol(void);
 #include <linux/compat-3.10.h>
 #include <linux/compat-3.11.h>
 #include <linux/compat-3.12.h>
+#include <linux/compat-3.13.h>
+#include <linux/compat-3.16.h>
+#include <linux/compat-3.17.h>
 
 #endif /* LINUX_26_COMPAT_H */
