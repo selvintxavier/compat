@@ -248,9 +248,9 @@ LB_CHECK_FILE([$LINUX_OBJ/include/generated/autoconf.h],[AUTOCONF_HDIR=generated
 # ----------- kconfig.h exists ---------------
 # kernel 3.1, $LINUX/include/linux/kconfig.h is added
 # see kernel commit 2a11c8ea20bf850b3a2c60db8c2e7497d28aba99
-LB_CHECK_FILE([$LINUX_OBJ/include/linux/kconfig.h],
-              [CONFIG_INCLUDE=include/linux/kconfig.h],
-              [CONFIG_INCLUDE=include/$AUTOCONF_HDIR/autoconf.h])
+LB_CHECK_FILE([$LINUX/include/linux/kconfig.h],
+              [CONFIG_INCLUDE=$LINUX/include/linux/kconfig.h],
+              [CONFIG_INCLUDE=$LINUX/include/$AUTOCONF_HDIR/kconfig.h])
 	AC_SUBST(CONFIG_INCLUDE)
 
 # ------------ rhconfig.h includes runtime-generated bits --
