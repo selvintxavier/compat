@@ -626,6 +626,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if if_vlan.h has vlan_dev_get_egress_qos_mask])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		vlan_dev_get_egress_qos_mask(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VLAN_DEV_GET_EGRESS_QOS_MASK, 1,
+			  [vlan_dev_get_egress_qos_mask is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_get_prio_tc_map])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_get_prio_tc_map(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_GET_PRIO_TC_MAP, 1,
+			  [netdev_get_prio_tc_map is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
