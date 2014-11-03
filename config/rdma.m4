@@ -445,7 +445,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 
 	AC_MSG_CHECKING([if pci.h has enum pcie_link_width])
 	LB_LINUX_TRY_COMPILE([
-		#include <scsi/iscsi_if.h>
+		#include <linux/pci.h>
 	],[
 		enum pcie_link_width *x;
 
