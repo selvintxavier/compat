@@ -447,7 +447,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/pci.h>
 	],[
-		enum pcie_link_width *x;
+		enum pcie_link_width width = PCIE_LNK_WIDTH_UNKNOWN;
 
 		return 0;
 	],[

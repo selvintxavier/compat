@@ -21,6 +21,7 @@ static inline struct inode *file_inode(struct file *f)
 int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
 		enum pcie_link_width *width);
 
+#ifndef HAVE_PCIE_LINK_WIDTH
 /* These values come from the PCI Express Spec */
 enum pcie_link_width {
 	PCIE_LNK_WIDTH_RESRV	= 0x00,
@@ -33,6 +34,7 @@ enum pcie_link_width {
 	PCIE_LNK_X32		= 0x20,
 	PCIE_LNK_WIDTH_UNKNOWN  = 0xFF,
 };
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)) */
 
