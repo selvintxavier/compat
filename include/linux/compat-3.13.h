@@ -16,6 +16,12 @@ static inline void reinit_completion(struct completion *x)
 
 #endif
 
+#define pcie_get_mps LINUX_BACKPORT(pcie_get_mps)
+int pcie_get_mps(struct pci_dev *dev);
+
+#define pcie_set_mps LINUX_BACKPORT(pcie_set_mps)
+int pcie_set_mps(struct pci_dev *dev, int mps);
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)) */
 
 #endif /* LINUX_3_13_COMPAT_H */
