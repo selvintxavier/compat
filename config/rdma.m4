@@ -458,6 +458,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if pci.h has enum pci_bus_speed])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		enum pci_bus_speed speed = PCI_SPEED_UNKNOWN;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_BUS_SPEED, 1,
+			  [pci_bus_speed is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if netdevice.h has struct netdev_phys_port_id])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
