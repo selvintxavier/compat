@@ -18,9 +18,6 @@ static inline struct inode *file_inode(struct file *f)
 	return f->f_dentry->d_inode;
 }
 
-int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
-		enum pcie_link_width *width);
-
 #ifndef HAVE_PCIE_LINK_WIDTH
 /* These values come from the PCI Express Spec */
 enum pcie_link_width {
@@ -36,6 +33,10 @@ enum pcie_link_width {
 };
 #endif
 
-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)) */
+extern const unsigned char pcie_link_speed[];
 
+#define pcie_get_minimum_link LINUX_BACKPORT(pcie_get_minimum_link)
+int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
+		enum pcie_link_width *width);
+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)) */
 #endif /* LINUX_3_12_COMPAT_H */
