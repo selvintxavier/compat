@@ -687,6 +687,42 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if ndo_select_queue has accel_priv])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_opts ndops;
+
+		static u16 select_queue(struct net_device *dev, struct sk_buff *skb,
+				        void *accel_priv)
+		{
+			return 0;
+		}
+
+		ndoops.ndo_select_queue = select_queue;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(NDO_SELECT_QUEUE_HAS_ACCEL_PRIV, 1,
+			  [ndo_select_queue has accel_priv])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if drivers/net/bonding/bonding.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include "../drivers/net/bonding/bonding.h"
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BONDING_H, 1,
+			  [drivers/net/bonding/bonding.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
