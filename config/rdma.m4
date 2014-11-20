@@ -723,6 +723,25 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if bonding.h bond_for_each_slave has 3 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include "../drivers/net/bonding/bonding.h"
+	],[
+		struct bonding *bond = NULL;
+		struct list_head *iter = NULL;
+		struct slave *slave = NULL;
+
+		bond_for_each_slave(bond, slave, iter) ;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BOND_FOR_EACH_SLAVE_3_PARAMS, 1,
+			  [bond_for_each_slave has 3 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
