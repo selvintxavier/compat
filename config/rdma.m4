@@ -742,6 +742,297 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+
+	AC_MSG_CHECKING([if u64_stats_sync.h has u64_stats_init])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/u64_stats_sync.h>
+	],[
+		struct u64_stats_sync sync;
+		u64_stats_init(&sync);
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_U64_STATS_SYNC, 1,
+			  [u64_stats_sync is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if u64_stats_sync.h has u64_stats_fetch_begin_irq])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/u64_stats_sync.h>
+	],[
+		struct u64_stats_sync sync;
+		u64_stats_fetch_begin_irq(&sync);
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_U64_STATS_FETCH_BEGIN_IRQ, 1,
+			  [u64_stats_fetch_begin_irq is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+	AC_MSG_CHECKING([if etherdevice.h has ether_addr_copy])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/etherdevice.h>
+	],[
+		char dest[6], src[6];
+			ether_addr_copy(&dest, &src);
+
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHER_ADDR_COPY, 1,
+			  [ether_addr_copy is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_set_vf_rate])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops;
+		int set_vf_rate(struct net_device *dev, int vf, int min_tx_rate,
+                                                   int max_tx_rate)
+		{
+			return 0;
+		}
+		netdev_ops.ndo_set_vf_rate = set_vf_rate;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SET_VF_RATE, 1,
+			  [ndo_set_vf_rate is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device has priv_flags])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *netdev;
+		netdev->priv_flags = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVICE_PRIV_FLAGS, 1,
+			  [priv_flags is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_get_stats64])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops;
+		struct rtnl_link_stats64* get_stats_64(struct net_device *dev,
+                                                     struct rtnl_link_stats64 *storage)
+		{
+			struct rtnl_link_stats64 stats_64;
+			return &stats_64;
+		}
+
+		netdev_ops.ndo_get_stats64 = get_stats_64;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_STATS64, 1,
+			  [ndo_get_stats64 is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+	AC_MSG_CHECKING([if struct net_device_ops has ndo_bridge_set/getlink])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops =  {
+			.ndo_bridge_setlink = NULL,
+			.ndo_bridge_getlink = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_BRIDGE_SET_GET_LINK, 1,
+			  [ndo_bridge_set/getlink is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops ndo_vlan_rx_add_vid has 3 parameters ])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops;
+		int vlan_rx_add_vid(struct net_device *dev,__be16 proto, u16 vid)
+		{
+			return 0;
+		}
+		netdev_ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_RX_ADD_VID_HAS_3_PARAMS, 1,
+			  [ndo_vlan_rx_add_vid has 3 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h netif_set_real_num_tx_queues returns int])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		int ret;
+		ret = netif_set_real_num_tx_queues(&dev, 2);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RETURN_INT_FOR_SET_NUM_TX_QUEUES, 1,
+			  [netif_set_real_num_tx_queues returns int])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has set_phys_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.set_phys_id= NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SET_PHYS_ID, 1,
+			  [set_phys_id is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get/set_channels])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_channels = NULL,
+			.set_channels = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_CHANNELS, 1,
+			  [get/set_channels is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has struct netdev_hw_addr])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct netdev_hw_addr addr;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_HW_ADDR, 1,
+			  [netdev_hw_addr is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if pci.h has pci_vfs_assigned])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		struct pci_dev pdev;
+		pci_vfs_assigned(&pdev);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_VF_ASSIGNED, 1,
+			  [pci_vfs_assigned is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+	AC_MSG_CHECKING([if __vlan_put_tag has 3 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		struct sk_buff *skb;
+		__vlan_put_tag(skb, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_3_PARAMS_FOR_VLAN_PUT_TAG, 1,
+			  [__vlan_put_tag has 3 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if __vlan_hwaccel_put_tag has 3 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		struct sk_buff *skb;
+		__vlan_hwaccel_put_tag(skb, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_3_PARAMS_FOR_VLAN_HWACCEL_PUT_TAG, 1,
+			  [__vlan_hwaccel_put_tag has 3 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device has hw_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		dev.hw_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_HW_FEATURES, 1,
+			  [hw_features is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if if_vlan.h has vlan_hwaccel_receive_skb])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		struct sk_buff *skb;
+		vlan_hwaccel_receive_skb(skb,0,0);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VLAN_HWACCEL_RECEIVE_SKB, 1,
+			  [vlan_hwaccel_receive_skb is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
