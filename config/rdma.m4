@@ -1033,6 +1033,51 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	])
 
 
+	AC_MSG_CHECKING([if pci_dev has pcie_mpss])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		struct pci_dev pdev;
+
+		pdev->pcie_mpss = 0;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_DEV_PCIE_MPSS, 1,
+			  [pcie_mpss is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if uapi/linux/if_ether.h exist])
+	LB_LINUX_TRY_COMPILE([
+		#include <uapi/linux/if_ether.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_UAPI_LINUX_IF_ETHER_H, 1,
+			  [uapi/linux/if_ether.h exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ifla_vf_info has spoofchk])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_link.h>
+	],[
+		struct ifla_vf_info *ivf;
+
+		ivf->spoofchk = 0;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VF_INFO_SPOOFCHK, 1,
+			  [spoofchk is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
