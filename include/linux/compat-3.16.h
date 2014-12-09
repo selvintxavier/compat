@@ -25,8 +25,6 @@ static inline u64 ktime_get_ns(void)
 	return ktime_to_ns(ktime_get());
 }
 
-#include <asm/barrier.h>
-
 #ifndef smp_mb__after_atomic
 #define smp_mb__after_atomic()	smp_mb()
 #endif
