@@ -227,11 +227,67 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if exist struct ethtool_ops_ext])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.size = sizeof(struct ethtool_ops_ext),
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_OPS_EXT, 1,
+			  [struct ethtool_ops_ext is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_rxfh_indir_size = NULL,
+			.get_rxfh = NULL,
+			.set_rxfh = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_RXFH_OPS_EXT, 1,
+			  [get/set_rxfh is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh_indir])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_rxfh_indir_size = NULL,
+			.get_rxfh_indir = NULL,
+			.set_rxfh_indir = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_RXFH_INDIR, 1,
+			  [get/set_rxfh_indir is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct net_device has dev_port])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 	],[
-		struct net_device *dev;
+		struct net_device *dev = NULL;
 
 		dev->dev_port = 0;
 
@@ -312,6 +368,8 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		#include <linux/netdevice.h>
 	],[
 		select_queue_fallback_t fallback;
+
+		fallback = NULL;
 
 		return 0;
 	],[
@@ -477,7 +535,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 	],[
-		struct netdev_phys_port_id x;
+		struct netdev_phys_port_id *x = NULL;
 
 		return 0;
 	],[
@@ -642,6 +700,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct skbuff.h has skb_inner_transport_header])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		skb_inner_transport_header(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_INNER_TRANSPORT_HEADER, 1,
+			  [skb_inner_transport_header is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct skbuff.h has skb_inner_network_header])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		skb_inner_network_header(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_INNER_NETWORK_HEADER, 1,
+			  [skb_inner_network_header is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if if_vlan.h has vlan_dev_get_egress_qos_mask])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/if_vlan.h>
@@ -690,14 +778,14 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if ndo_select_queue has accel_priv])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
-	],[
-		struct net_device_opts ndops;
 
 		static u16 select_queue(struct net_device *dev, struct sk_buff *skb,
 				        void *accel_priv)
 		{
 			return 0;
 		}
+	],[
+		struct net_device_opts ndops;
 
 		ndoops.ndo_select_queue = select_queue;
 
@@ -749,7 +837,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		struct u64_stats_sync sync;
 		u64_stats_init(&sync);
-		};
 
 		return 0;
 	],[
@@ -766,7 +853,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		struct u64_stats_sync sync;
 		u64_stats_fetch_begin_irq(&sync);
-		};
 
 		return 0;
 	],[
@@ -781,9 +867,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		#include <linux/etherdevice.h>
 	],[
 		char dest[6], src[6];
-			ether_addr_copy(&dest, &src);
-
-		};
+		ether_addr_copy(&dest, &src);
 
 		return 0;
 	],[
@@ -797,19 +881,178 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if struct net_device_ops has *ndo_set_vf_rate])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
-	],[
-		struct net_device_ops netdev_ops;
+
 		int set_vf_rate(struct net_device *dev, int vf, int min_tx_rate,
                                                    int max_tx_rate)
 		{
 			return 0;
 		}
+	],[
+		struct net_device_ops netdev_ops;
+
 		netdev_ops.ndo_set_vf_rate = set_vf_rate;
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_SET_VF_RATE, 1,
 			  [ndo_set_vf_rate is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdev_extended has hw_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		netdev_extended(dev)->hw_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_EXTENDED_HW_FEATURES, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_extended has _tx_ext])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		netdev_extended(dev)->_tx_ext = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVICE_EXTENDED_TX_EXT, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_extended has ndo_busy_poll])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int busy_poll(struct napi_struct *napi)
+		{
+			return 0;
+		}
+	],[
+		struct net_device *dev = NULL;
+
+		netdev_extended(dev)->ndo_busy_poll = busy_poll;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_EXTENDED_NDO_BUSY_POLL, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has set_netdev_hw_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		set_netdev_hw_features(dev, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SET_NETDEV_HW_FEATURES, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netif_set_xps_queue])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		netif_set_xps_queue(dev, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_SET_XPS_QUEUE, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_set_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_features(struct net_device *dev, netdev_features_t features)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_set_features = set_features;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_FEATURES, 1,
+			  [ndo_set_features is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_setup_tc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int setup_tc(struct net_device *dev, , u8 tc)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_setup_tc = setup_tc;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SETUP_TC, 1,
+			  [ndo_setup_tc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_rx_flow_steer])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int rx_flow_steer(struct net_device *dev,
+                                                     const struct sk_buff *skb,
+                                                     u16 rxq_index,
+                                                     u32 flow_id)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_rx_flow_steer = rx_flow_steer;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_RX_FLOW_STEER, 1,
+			  [ndo_rx_flow_steer is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -833,14 +1076,15 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if struct net_device_ops has *ndo_get_stats64])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
-	],[
-		struct net_device_ops netdev_ops;
+
 		struct rtnl_link_stats64* get_stats_64(struct net_device *dev,
                                                      struct rtnl_link_stats64 *storage)
 		{
 			struct rtnl_link_stats64 stats_64;
 			return &stats_64;
 		}
+	],[
+		struct net_device_ops netdev_ops;
 
 		netdev_ops.ndo_get_stats64 = get_stats_64;
 
@@ -873,12 +1117,14 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if struct net_device_ops ndo_vlan_rx_add_vid has 3 parameters ])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
-	],[
-		struct net_device_ops netdev_ops;
+
 		int vlan_rx_add_vid(struct net_device *dev,__be16 proto, u16 vid)
 		{
 			return 0;
 		}
+	],[
+		struct net_device_ops netdev_ops;
+
 		netdev_ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid;
 
 		return 0;
@@ -889,6 +1135,159 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if net_device_ops has ndo_get_phys_port_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int get_phys_port_id(struct net_device *dev,
+				     struct netdev_phys_port_id *ppid)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_get_phys_port_id = get_phys_port_id;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_NDO_GET_PHYS_PORT_ID, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops_ext exist])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+		struct net_device_ops_ext netdev_ops__ext = {
+			.size                   = sizeof(struct net_device_ops_ext),
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVICE_OPS_EXT, 1,
+			  [struct net_device_ops_ext is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_ext has ndo_get_phys_port_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int get_phys_port_id(struct net_device *dev,
+				     struct netdev_phys_port_id *ppid)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+
+		netdev_ops_ext.ndo_get_phys_port_id = get_phys_port_id;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_EXT_NDO_GET_PHYS_PORT_ID, 1,
+			  [ndo_get_phys_port_id is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops has ndo_set_vf_spoofchk])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_spoofchk(struct net_device *dev, int vf, bool setting)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_set_vf_spoofchk = set_vf_spoofchk;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_NDO_SET_VF_SPOOFCHK, 1,
+			  [ndo_set_vf_spoofchk is defined in net_device_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_ext has ndo_set_vf_spoofchk])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_spoofchk(struct net_device *dev, int vf, bool setting)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+
+		netdev_ops_ext.ndo_set_vf_spoofchk = set_vf_spoofchk;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_EXT_NDO_SET_VF_SPOOFCHK, 1,
+			  [ndo_set_vf_spoofchk is defined in net_device_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops has ndo_set_vf_link_state])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_link_state(struct net_device *dev, int vf, int link_state)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_set_vf_link_state = set_vf_link_state;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_NDO_SET_VF_LINK_STATE, 1,
+			  [ndo_set_vf_link_state is defined in net_device_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_ext has ndo_set_vf_link_state])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_link_state(struct net_device *dev, int vf, int link_state)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+
+		netdev_ops_ext.ndo_set_vf_link_state = set_vf_link_state;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_EXT_NDO_SET_VF_LINK_STATE, 1,
+			  [ndo_set_vf_link_state is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 
 	AC_MSG_CHECKING([if netdevice.h netif_set_real_num_tx_queues returns int])
 	LB_LINUX_TRY_COMPILE([
@@ -902,6 +1301,22 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_RETURN_INT_FOR_SET_NUM_TX_QUEUES, 1,
 			  [netif_set_real_num_tx_queues returns int])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct netdevice.h has struct xps_map])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct xps_map map;
+		map.len = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XPS_MAP, 1,
+			  [struct xps_map is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -937,6 +1352,58 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_GET_SET_CHANNELS, 1,
 			  [get/set_channels is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_channels])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_channels = NULL,
+			.set_channels = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_CHANNELS_EXT, 1,
+			  [get/set_channels is defined in ethtool_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get_ts_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_ts_info = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_TS_INFO, 1,
+			  [get_ts_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get_ts_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_ts_info = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_TS_INFO_EXT, 1,
+			  [get_ts_info is defined in ethtool_ops_ext])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -1017,6 +1484,38 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct net_device has hw_enc_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		dev.hw_enc_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_HW_ENC_FEATURES, 1,
+			  [hw_enc_features is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device has rx_cpu_rmap])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		dev.rx_cpu_rmap = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_RX_CPU_RMAP, 1,
+			  [rx_cpu_rmap is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if if_vlan.h has vlan_hwaccel_receive_skb])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/if_vlan.h>
@@ -1028,6 +1527,20 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_VLAN_HWACCEL_RECEIVE_SKB, 1,
 			  [vlan_hwaccel_receive_skb is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if irqdesc.h has irq_desc_get_irq_data])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/irqdesc.h>
+	],[
+		struct irq_data *data = irq_desc_get_irq_data(NULL);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IRQ_DESC_GET_IRQ_DATA, 1,
+			  [irq_desc_get_irq_data is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
