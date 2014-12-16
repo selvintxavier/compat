@@ -787,7 +787,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		struct net_device_opts ndops;
 
-		ndoops.ndo_select_queue = select_queue;
+		ndops.ndo_select_queue = select_queue;
 
 		return 0;
 	],[
