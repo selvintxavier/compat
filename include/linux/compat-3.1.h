@@ -47,7 +47,7 @@ static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev
 	return skb;
 }
 
-#if ! defined(HAVE_NETLINK_DUMP_START_6P)
+#ifdef HAVE_NETLINK_DUMP_START_5P
 #include <linux/netlink.h>
 /* remove last arg */
 #define netlink_dump_start(a, b, c, d, e, f) netlink_dump_start(a, b, c, d, e)

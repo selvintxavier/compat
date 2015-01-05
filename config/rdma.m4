@@ -1655,6 +1655,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netlink_dump_start has 5 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netlink.h>
+	],[
+		int ret = netlink_dump_start(NULL, NULL, NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETLINK_DUMP_START_5P, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct dcbnl_rtnl_ops has ieee_getmaxrate/ieee_setmaxrate])
 	LB_LINUX_TRY_COMPILE([
 		#include <net/dcbnl.h>
