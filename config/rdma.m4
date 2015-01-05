@@ -669,6 +669,22 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct sk_buff has encapsulation])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		struct sk_buff *skb;
+		skb->encapsulation = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SK_BUFF_ENCAPSULATION, 1,
+			  [encapsulation is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if etherdevice.h has eth_get_headlen])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/etherdevice.h>
@@ -1408,6 +1424,24 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ethtool_flow_ext has h_dest])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		unsigned char mac[ETH_ALEN];
+		struct ethtool_flow_ext h_ext;
+
+		memcpy(&mac, h_ext.h_dest, ETH_ALEN);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_FLOW_EXT_H_DEST, 1,
+			  [ethtool_flow_ext has h_dest])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if netdevice.h has struct netdev_hw_addr])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -1591,6 +1625,53 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if dst.h has dst_get_neighbour])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/dst.h>
+	],[
+		struct neighbour *neigh = dst_get_neighbour(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DST_GET_NEIGHBOUR, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netlink_dump_start has 6 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netlink.h>
+	],[
+		int ret = netlink_dump_start(NULL, NULL, NULL, NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETLINK_DUMP_START_6P, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct dcbnl_rtnl_ops has ieee_getmaxrate/ieee_setmaxrate])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/dcbnl.h>
+	],[
+		const struct dcbnl_rtnl_ops en_dcbnl_ops = {
+			.ieee_getmaxrate = NULL,
+			.ieee_setmaxrate = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IEEE_GET_SET_MAXRATE, 1,
+			  [ieee_getmaxrate/ieee_setmaxrate is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
