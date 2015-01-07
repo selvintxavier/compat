@@ -346,6 +346,40 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct iscsi_transport has attr_is_visible])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_transport_iscsi.h>
+	],[
+		static struct iscsi_transport iscsi_iser_transport = {
+			.attr_is_visible = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_ATTR_IS_VISIBLE, 1,
+			  [attr_is_visible is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct iscsi_transport has get_ep_param])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_transport_iscsi.h>
+	],[
+		static struct iscsi_transport iscsi_iser_transport = {
+			.get_ep_param = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_GET_EP_PARAM, 1,
+			  [get_ep_param is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct iscsi_transport has check_protection])
 	LB_LINUX_TRY_COMPILE([
 		#include <scsi/scsi_transport_iscsi.h>
@@ -359,6 +393,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_ISCSI_CHECK_PROTECTION, 1,
 			  [check_protection is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if iscsi_proto.h has struct iscsi_scsi_req])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/iscsi_proto.h>
+	],[
+		struct iscsi_scsi_req *req = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_SCSI_REQ, 1,
+			  [struct iscsi_scsi_req is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
