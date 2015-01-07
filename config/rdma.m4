@@ -401,7 +401,9 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <scsi/iscsi_proto.h>
 	],[
-		struct iscsi_scsi_req *req = NULL;
+		struct iscsi_scsi_req req = {
+			.opcode = 0,
+		};
 
 		return 0;
 	],[
