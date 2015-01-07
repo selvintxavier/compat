@@ -618,7 +618,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/if_link.h>
 	],[
-		struct struct ifla_vf_info x;
+		struct ifla_vf_info x;
 		x->linkstate = 0;
 
 		return 0;
@@ -1247,9 +1247,8 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 	],[
-		struct net_device_ops_ext netdev_ops_ext;
-		struct net_device_ops_ext netdev_ops__ext = {
-			.size                   = sizeof(struct net_device_ops_ext),
+		struct net_device_ops_ext netdev_ops_ext = {
+			.size = sizeof(struct net_device_ops_ext),
 		};
 
 		return 0;
