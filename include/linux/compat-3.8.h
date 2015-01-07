@@ -16,6 +16,9 @@
 #ifndef PCI_EXP_LNKCAP_SLS_5_0GB
 #define  PCI_EXP_LNKCAP_SLS_5_0GB 0x00000002 /* LNKCAP2 SLS Vector bit 1 */
 #endif
+#ifndef PCI_EXP_LNKCTL_ASPM_L0S
+#define  PCI_EXP_LNKCTL_ASPM_L0S  0x01  /* L0s Enable */
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
 
