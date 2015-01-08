@@ -36,6 +36,10 @@ static inline bool netif_is_bond_master(struct net_device *dev)
 	return dev->flags & IFF_MASTER && dev->priv_flags & IFF_BONDING;
 }
 
+#ifndef div64_ul
+#define div64_ul(x, y)   div64_u64((x), (y))
+#endif
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)) */
 
 #endif /* LINUX_3_10_COMPAT_H */

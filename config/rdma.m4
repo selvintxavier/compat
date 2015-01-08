@@ -1754,6 +1754,86 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if bonding.h bond_for_each_slave has int for 3rd parameter])
+	LB_LINUX_TRY_COMPILE([
+		#include "../drivers/net/bonding/bonding.h"
+	],[
+		struct bonding *bond = NULL;
+		struct slave *slave = NULL;
+		int iter;
+
+		bond_for_each_slave(bond, slave, iter) ;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BOND_FOR_EACH_SLAVE_3RD_PARAM_IS_INT, 1,
+			  [bond_for_each_slave has int for 3rd parameter])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_master_upper_dev_get_rcu])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_master_upper_dev_get_rcu(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_MASTER_UPPER_DEV_GET_RCU, 1,
+			  [netdevice.h has netdev_master_upper_dev_get_rcu])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if __vlan_find_dev_deep has 3 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		__vlan_find_dev_deep(NULL, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE__VLAN_FIND_DEV_DEEP_3P, 1,
+			  [__vlan_find_dev_deep has 3 paramters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if sk_buff.h has __skb_alloc_page])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		__skb_alloc_page(0, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE__SKB_ALLOC_PAGE, 1,
+			  [sk_buff has __skb_alloc_page])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if __vlan_hwaccel_put_tag has 3 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		__vlan_hwaccel_put_tag(NULL, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE__VLAN_HWACCEL_PUT_TAG_3P, 1,
+			  [__vlan_hwaccel_put_tag has 3 paramters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
