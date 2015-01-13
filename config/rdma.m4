@@ -675,21 +675,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if mm.h has kvfree])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/mm.h>
-	],[
-		kvfree(NULL);
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_KVFREE, 1,
-			  [kvfree is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if netdevice.h has dev_consume_skb_any])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
