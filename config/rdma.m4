@@ -1740,6 +1740,11 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_LANG_PUSH(C)
+	ac_c_werror_flag=yes
+	save_EXTRA_KCFLAGS=$EXTRA_KCFLAGS
+	EXTRA_KCFLAGS="$EXTRA_KCFLAGS -Werror"
+
 	AC_MSG_CHECKING([if bonding.h bond_for_each_slave has int for 3rd parameter])
 	LB_LINUX_TRY_COMPILE([
 		#include "../drivers/net/bonding/bonding.h"
@@ -1758,6 +1763,9 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+	EXTRA_KCFLAGS="$save_EXTRA_KCFLAGS"
+	ac_c_werror_flag=
+	AC_LANG_POP
 
 	AC_MSG_CHECKING([if netdevice.h has netdev_master_upper_dev_get_rcu])
 	LB_LINUX_TRY_COMPILE([
@@ -1815,6 +1823,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE__VLAN_HWACCEL_PUT_TAG_3P, 1,
 			  [__vlan_hwaccel_put_tag has 3 paramters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/mm_types.h has struct page_frag])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm_types.h>
+	],[
+		struct page_frag frag = {0};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MM_TYPES_PAGE_FRAG, 1,
+			  [linux/mm_types.h has struct page_frag])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if if_vlan.h has __vlan_find_dev_deep])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		__vlan_find_dev_deep(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE___VLAN_FIND_DEV_DEEP, 1,
+			  [__vlan_find_dev_deep is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
