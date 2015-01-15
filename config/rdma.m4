@@ -1638,7 +1638,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		struct pci_dev pdev;
 
-		pdev->pcie_mpss = 0;
+		pdev.pcie_mpss = 0;
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
