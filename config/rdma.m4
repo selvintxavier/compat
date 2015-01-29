@@ -441,6 +441,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if kernel has percpu variables])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/percpu.h>
+	],[
+		static DEFINE_PER_CPU(unsigned int, x);
+		this_cpu_inc(x);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PERCPU_VARS, 1,
+			  [percpu variables are defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 
 	AC_MSG_CHECKING([if struct iscsi_transport has attr_is_visible])
 	LB_LINUX_TRY_COMPILE([
