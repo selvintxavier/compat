@@ -1193,8 +1193,10 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		}
 	],[
 		struct net_device_ops netdev_ops;
+		struct net_device *dev;
 
 		netdev_ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid;
+		netdev_ops.ndo_vlan_rx_add_vid(dev, 0, 0);
 
 		return 0;
 	],[
@@ -1459,6 +1461,57 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ethtool_ops has set_dump])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.set_dump = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_OPS_SET_DUMP, 1,
+			  [set_dump is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get_module_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_module_info = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_OPS_GET_MODULE_INFO, 1,
+			  [get_module_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get_module_eeprom])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_module_eeprom = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_OPS_GET_MODULE_EEPROM, 1,
+			  [get_module_eeprom is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct ethtool_ops_ext has get_ts_info])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ethtool.h>
@@ -1494,16 +1547,16 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if netdevice.h has struct netdev_hw_addr])
+	AC_MSG_CHECKING([if netdevice.h has struct dev_addr_list])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 	],[
-		struct netdev_hw_addr addr;
+		struct dev_addr_list addr;
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_NETDEV_HW_ADDR, 1,
-			  [netdev_hw_addr is defined])
+		AC_DEFINE(HAVE_NETDEV_DEV_ADDR, 1,
+			  [dev_addr_list is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -1550,6 +1603,22 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_3_PARAMS_FOR_VLAN_HWACCEL_PUT_TAG, 1,
 			  [__vlan_hwaccel_put_tag has 3 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct inet6_ifaddr has if_next])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/if_inet6.h>
+	],[
+		struct inet6_ifaddr ifp ;
+		ifp.if_next = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INETADDR_IF_NEXT, 1,
+			  [if_next is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -1853,6 +1922,20 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE___VLAN_FIND_DEV_DEEP, 1,
 			  [__vlan_find_dev_deep is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if idr .h has idr_Alloc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/idr.h>
+	],[
+		idr_alloc(NULL, NULL, 0, 0, 0);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IDR_NEW_INTERFACE, 1,
+			  [idr_Alloc is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
