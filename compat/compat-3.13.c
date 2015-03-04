@@ -16,7 +16,6 @@ int pcie_get_mps(struct pci_dev *dev)
 }
 EXPORT_SYMBOL(pcie_get_mps);
 
-#ifdef HAVE_PCI_DEV_PCIE_MPSS
 /**
  * pcie_set_mps - set PCI Express maximum payload size
  * @dev: PCI device to query
@@ -28,17 +27,30 @@ EXPORT_SYMBOL(pcie_get_mps);
 int pcie_set_mps(struct pci_dev *dev, int mps)
 {
 	u16 v;
+#ifndef HAVE_PIC_DEV_PCIE_MPSS
+	int pos;
+	u16 reg16;
+#endif
 
 	if (mps < 128 || mps > 4096 || !is_power_of_2(mps))
 		return -EINVAL;
 
 	v = ffs(mps) - 8;
+
+#ifdef HAVE_PCI_DEV_PCIE_MPSS
 	if (v > dev->pcie_mpss)
 		return -EINVAL;
+#else
+	pos = pci_find_capability(dev, PCI_CAP_ID_EXP);
+	if (!pos)
+	return -EINVAL;
+	pci_read_config_word(dev, pos + PCI_EXP_DEVCAP, &reg16);
+	if (v > (reg16 & PCI_EXP_DEVCAP_PAYLOAD))
+		return -EINVAL;
+#endif
 	v <<= 5;
 
 	return pcie_capability_clear_and_set_word(dev, PCI_EXP_DEVCTL,
 						  PCI_EXP_DEVCTL_PAYLOAD, v);
 }
 EXPORT_SYMBOL(pcie_set_mps);
-#endif

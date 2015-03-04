@@ -139,6 +139,38 @@ AC_DEFUN([RDMA_CONFIG_COMPAT],
 dnl Examine kernel functionality
 AC_DEFUN([LINUX_CONFIG_COMPAT],
 [
+	AC_MSG_CHECKING([if file_system_type has mount method])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/fs.h>
+	],[
+		struct file_system_type fst;
+
+		fst.mount = NULL;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MOUNT_METHOD, 1,
+			  [mount method defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if kernel has get_next_ino])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/fs.h>
+	],[
+		unsigned int ino;
+
+		ino = get_next_ino();
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_NEXT_INO, 1,
+			  [get_next_ino defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if kernel has ktime_get_ns])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ktime.h>
@@ -342,6 +374,85 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_PCI_ENABLE_MSIX_RANGE, 1,
 			  [pci_enable_msix_range is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if pci.h pci_msix_vec_count])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		int x = pci_msix_vec_count(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_MSIX_VEC_COUNT, 1,
+			  [pci_msix_vec_count is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if pci_dev has msix_cap])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		struct pci_dev pdev;
+		pdev.msix_cap = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_MSIX_CAP, 1,
+			  [msix_cap is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm_struct has pinned_vm])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm_types.h>
+	],[
+		struct mm_types mmt;
+		mmt.pinned_vm = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PINNED_VM, 1,
+			  [pinned_vm is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if kernel has idr_alloc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/idr.h>
+	],[
+		int x;
+		x =  idr_alloc(NULL, NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IDR_ALLOC, 1,
+			  [idr_alloc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if kernel has percpu variables])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/percpu.h>
+	],[
+		static DEFINE_PER_CPU(unsigned int, x);
+		this_cpu_inc(x);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PERCPU_VARS, 1,
+			  [percpu variables are defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
