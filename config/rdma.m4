@@ -618,7 +618,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/if_link.h>
 	],[
-		struct ifla_vf_info x;
+		struct ifla_vf_info *x;
 		x->linkstate = 0;
 
 		return 0;
@@ -867,15 +867,15 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if drivers/net/bonding/bonding.h exists])
+	AC_MSG_CHECKING([if include/net/bonding.h exists])
 	LB_LINUX_TRY_COMPILE([
-		#include "../drivers/net/bonding/bonding.h"
+		#include <net/bonding.h>
 	],[
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_BONDING_H, 1,
-			  [drivers/net/bonding/bonding.h exists])
+			  [include/net/bonding.h exists])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -1084,15 +1084,11 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if struct net_device_ops has *ndo_setup_tc])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
-
-		int setup_tc(struct net_device *dev, , u8 tc)
-		{
-			return 0;
-		}
 	],[
-		struct net_device_ops netdev_ops;
+		struct net_device_ops x = {
+			.ndo_setup_tc = NULL,
+		};
 
-		netdev_ops.ndo_setup_tc = setup_tc;
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
@@ -1193,10 +1189,8 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		}
 	],[
 		struct net_device_ops netdev_ops;
-		struct net_device *dev;
 
 		netdev_ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid;
-		netdev_ops.ndo_vlan_rx_add_vid(dev, 0, 0);
 
 		return 0;
 	],[
@@ -1688,9 +1682,12 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 
 	AC_MSG_CHECKING([if irqdesc.h has irq_desc_get_irq_data])
 	LB_LINUX_TRY_COMPILE([
+		#include <linux/irq.h>
 		#include <linux/irqdesc.h>
 	],[
-		struct irq_data *data = irq_desc_get_irq_data(NULL);
+		struct irq_desc desc;
+		struct irq_data *data = irq_desc_get_irq_data(&desc);
+
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
@@ -1705,9 +1702,9 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/pci.h>
 	],[
-		struct pci_dev pdev;
+		struct pci_dev *pdev;
 
-		pdev.pcie_mpss = 0;
+		pdev->pcie_mpss = 0;
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
@@ -1846,7 +1843,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_NETDEV_MASTER_UPPER_DEV_GET_RCU, 1,
-			  [netdevice.h has netdev_master_upper_dev_get_rcu])
+			  [netdev_master_upper_dev_get_rcu is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
