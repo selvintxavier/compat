@@ -2043,11 +2043,25 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IDR_NEW_INTERFACE, 1,
-			  [idr_Alloc is defined])
-	],[
+			  [idr_Alloc is defined]) ],[
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if completion.h has reinit_completion])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/completion.h>
+	],[
+		struct completion c;
+
+		reinit_completion(&c);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_REINIT_COMPLETION, 1,
+			  [reinit_completion is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS

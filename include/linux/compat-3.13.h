@@ -6,8 +6,8 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
 
-#ifndef CONFIG_COMPAT_IS_REINIT_COMPLETION
-#define CONFIG_COMPAT_IS_REINIT_COMPLETION
+#ifndef HAVE_REINIT_COMPLETION
+#define HAVE_REINIT_COMPLETION
 
 static inline void reinit_completion(struct completion *x)
 {
