@@ -27,7 +27,7 @@ EXPORT_SYMBOL(pcie_get_mps);
 int pcie_set_mps(struct pci_dev *dev, int mps)
 {
 	u16 v;
-#ifndef HAVE_PIC_DEV_PCIE_MPSS
+#ifndef HAVE_PCI_DEV_PCIE_MPSS
 	int pos;
 	u16 reg16;
 #endif
