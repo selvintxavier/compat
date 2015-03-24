@@ -1294,14 +1294,15 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 
+	],[
 		int vlan_rx_add_vid(struct net_device *dev,__be16 proto, u16 vid)
 		{
 			return 0;
 		}
-	],[
 		struct net_device_ops netdev_ops;
 
 		netdev_ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid;
+		netdev_ops.ndo_vlan_rx_add_vid (NULL, 1, 1) ;
 
 		return 0;
 	],[
@@ -2059,6 +2060,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_REINIT_COMPLETION, 1,
 			  [reinit_completion is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if dma-mapping.h has dma_set_mask_and_coherent])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/dma-mapping.h>
+	],[
+		dma_set_mask_and_coherent(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DMA_SET_MASK_AND_COHERENT, 1,
+			  [dma_set_mask_and_coherent is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
