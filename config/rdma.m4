@@ -559,7 +559,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if skbuff.h has skb_set_hash])
+	AC_MSG_CHECKING([if netdevice.h has skb_set_hash])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
 	],[
@@ -570,6 +570,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_SKB_SET_HASH, 1,
 			  [skb_set_hash is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has alloc_netdev with 4 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev;
+
+		dev = alloc_netdev(0, NULL, 0, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ALLOC_NETDEV_4P, 1,
+			  [alloc_netdev has 4 parameters])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -1851,6 +1868,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_VF_INFO_SPOOFCHK, 1,
 			  [spoofchk is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan.h has vxlan_gso_check])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/vxlan.h>
+	],[
+		vxlan_gso_check(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VXLAN_GSO_CHECK, 1,
+			  [vxlan_gso_check is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
