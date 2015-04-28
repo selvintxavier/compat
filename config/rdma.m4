@@ -2110,6 +2110,12 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	LB_CHECK_SYMBOL_EXPORT([elfcorehdr_addr],
+		[kernel/crash_dump.c],
+		[AC_DEFINE(HAVE_ELFCOREHDR_ADDR_EXPORTED, 1,
+			[elfcorehdr_addr is exported by the kernel])],
+	[])
 ])
 #
 # COMPAT_CONFIG_HEADERS
