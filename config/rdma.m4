@@ -1698,20 +1698,34 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
-	AC_MSG_CHECKING([if __vlan_put_tag has 3 parameters])
+
+	AC_MSG_CHECKING([if vlan_insert_tag_set_proto is defined])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/if_vlan.h>
 	],[
 		struct sk_buff *skb;
-		__vlan_put_tag(skb, 0, 0);
-
+		vlan_insert_tag_set_proto(skb, 0, 0);
 		return 0;
 	],[
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_3_PARAMS_FOR_VLAN_PUT_TAG, 1,
-			  [__vlan_put_tag has 3 parameters])
+		AC_DEFINE(HAVE_VLAN_INSERT_TAG_SET_PROTO, 1,
+			  [vlan_insert_tag_set_proto is defined])
 	],[
 		AC_MSG_RESULT(no)
+		AC_MSG_CHECKING([if __vlan_put_tag has 3 parameters])
+		LB_LINUX_TRY_COMPILE([
+			#include <linux/if_vlan.h>
+		],[
+			struct sk_buff *skb;
+			__vlan_put_tag(skb, 0, 0);
+			return 0;
+		],[
+			AC_MSG_RESULT(yes)
+			AC_DEFINE(HAVE_3_PARAMS_FOR_VLAN_PUT_TAG, 1,
+				  [__vlan_put_tag has 3 parameters])
+		],[
+			AC_MSG_RESULT(no)
+		])
 	])
 
 	AC_MSG_CHECKING([if __vlan_hwaccel_put_tag has 3 parameters])
