@@ -29,6 +29,7 @@
 
 #ifdef CONFIG_USER_NS
 
+#define seq_user_ns LINUX_BACKPORT(seq_user_ns)
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
 static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
 {
