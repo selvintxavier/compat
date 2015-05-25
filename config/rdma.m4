@@ -700,6 +700,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if pci.h has enum pcie_link_width])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/pci.h>
+		#include <linux/pci_hotplug.h>
 	],[
 		enum pcie_link_width width = PCIE_LNK_WIDTH_UNKNOWN;
 
@@ -715,6 +716,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if pci.h has enum pci_bus_speed])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/pci.h>
+		#include <linux/pci_hotplug.h>
 	],[
 		enum pci_bus_speed speed = PCI_SPEED_UNKNOWN;
 
