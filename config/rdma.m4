@@ -2125,6 +2125,20 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if in.h has proto_ports_offset])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/in.h>
+	],[
+		int x = proto_ports_offset(IPPROTO_TCP);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PROTO_PORTS_OFFSET, 1,
+			  [proto_ports_offset is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	LB_CHECK_SYMBOL_EXPORT([elfcorehdr_addr],
 		[kernel/crash_dump.c],
 		[AC_DEFINE(HAVE_ELFCOREHDR_ADDR_EXPORTED, 1,

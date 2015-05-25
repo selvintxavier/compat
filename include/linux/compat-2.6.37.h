@@ -12,6 +12,7 @@
 #include <linux/netdevice.h>
 #include <linux/errno.h>
 
+#ifndef HAVE_PROTO_PORTS_OFFSET
 static inline int proto_ports_offset(int proto)
 {
 	switch (proto) {
@@ -28,6 +29,7 @@ static inline int proto_ports_offset(int proto)
 		return -EINVAL;
 	}
 }
+#endif
 
 /* supports eipoib flags, priv_flags is short till that version */
 #define CONFIG_COMPAT_IFF_EIPOIB_PIF 0x8000 /*== IFF_OVS_DATAPATH*/
