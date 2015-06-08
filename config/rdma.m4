@@ -2146,6 +2146,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		[AC_DEFINE(HAVE_ELFCOREHDR_ADDR_EXPORTED, 1,
 			[elfcorehdr_addr is exported by the kernel])],
 	[])
+
+	AC_MSG_CHECKING([if netif_set_real_num_rx_queues is defined])
+	MLNX_BG_LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		int rc = netif_set_real_num_rx_queues(NULL, 0);
+
+		return rc;
+	],[
+		AC_MSG_RESULT(yes)
+		MLNX_AC_DEFINE(HAVE_NETIF_SET_REAL_NUM_RX_QUEUES, 1,
+			  [netif_set_real_num_rx_queues is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
