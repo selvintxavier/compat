@@ -301,7 +301,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		#include <linux/ethtool.h>
 	],[
 		const struct ethtool_ops_ext en_ethtool_ops_ext = {
-			.get_rxfh_indir_size = NULL,
 			.get_rxfh_indir = NULL,
 			.set_rxfh_indir = NULL,
 		};
@@ -1586,6 +1585,54 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if linux/timecounter.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_H, 1,
+			  [linux/timecounter.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	# timecounter_adjtime can be in timecounter.h or clocksource.h
+	AC_MSG_CHECKING([if linux/timecounter.h has timecounter_adjtime])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		struct timecounter x;
+		s64 y = 0;
+		timecounter_adjtime(&x, y);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
+			  [timecounter_adjtime is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/clocksource.h>
+	],[
+		struct timecounter x;
+		s64 y = 0;
+		timecounter_adjtime(&x, y);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
+			  [timecounter_adjtime is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct ethtool_ops has set_dump])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ethtool.h>
@@ -2158,6 +2205,140 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_NETIF_SET_REAL_NUM_RX_QUEUES, 1,
 			  [netif_set_real_num_rx_queues is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if if_vlan.h has is_vlan_dev])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <linux/if_vlan.h>
+	],[
+		struct net_device dev;
+		is_vlan_dev(&dev);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IS_VLAN_DEV, 1,
+			  [is_vlan_dev is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/timecounter.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_H, 1,
+			  [linux/timecounter.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	# timecounter_adjtime can be in timecounter.h or clocksource.h
+	AC_MSG_CHECKING([if linux/timecounter.h has timecounter_adjtime])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		struct timecounter x;
+		s64 y = 0;
+		timecounter_adjtime(&x, y);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
+			  [timecounter_adjtime is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/clocksource.h>
+	],[
+		struct timecounter x;
+		s64 y = 0;
+		timecounter_adjtime(&x, y);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
+			  [timecounter_adjtime is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if cyclecounter_cyc2ns has 4 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		cyclecounter_cyc2ns(NULL, NULL, 0, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CYCLECOUNTER_CYC2NS_4_PARAMS, 1,
+			  [cyclecounter_cyc2ns has 4 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h struct net_device_ops has ndo_features_check])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		static const struct net_device_ops mlx4_netdev_ops = {
+			.ndo_features_check	= NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_FEATURES_T, 1,
+			  [netdev_features_t is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops get_rxnfc gets u32 *rule_locs])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+		static int mlx4_en_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *c,
+					     u32 *rule_locs)
+		{
+			return 0;
+		}
+	],[
+		struct ethtool_ops x = {
+			.get_rxnfc = mlx4_en_get_rxnfc,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_OPS_GET_RXNFC_U32_RULE_LOCS, 1,
+			  [ethtool_ops get_rxnfc gets u32 *rule_locs])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool.h enum ethtool_stringset has ETH_SS_RSS_HASH_FUNCS])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		enum ethtool_stringset x = ETH_SS_RSS_HASH_FUNCS;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETH_SS_RSS_HASH_FUNCS, 1,
+			  [ETH_SS_RSS_HASH_FUNCS is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
