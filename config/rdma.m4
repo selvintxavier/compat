@@ -1308,6 +1308,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if rtnetlink.h ndo_dflt_bridge_getlink has 7 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/rtnetlink.h>
+	],[
+		ndo_dflt_bridge_getlink(NULL, 0, 0, NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_DFLT_BRIDGE_GETLINK_7_PARAMS, 1,
+			[ ndo_dflt_bridge_getlink with 7 params is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct net_device_ops ndo_vlan_rx_add_vid has 3 parameters ])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
