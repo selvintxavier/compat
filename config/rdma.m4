@@ -314,6 +314,24 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh_indir])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_rxfh_indir = NULL,
+			.set_rxfh_indir = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_RXFH_INDIR_EXT, 1,
+			  [get/set_rxfh_indir is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct net_device has dev_port])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
