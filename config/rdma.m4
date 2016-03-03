@@ -1029,7 +1029,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 
 	AC_MSG_CHECKING([if bonding.h bond_for_each_slave has 3 parameters])
 	LB_LINUX_TRY_COMPILE([
-		#include "../drivers/net/bonding/bonding.h"
+		#include <net/bonding.h>
 	],[
 		struct bonding *bond = NULL;
 		struct list_head *iter = NULL;
@@ -2053,7 +2053,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 
 	AC_MSG_CHECKING([if bonding.h bond_for_each_slave has int for 3rd parameter])
 	LB_LINUX_TRY_COMPILE([
-		#include "../drivers/net/bonding/bonding.h"
+		#include <net/bonding.h>
 	],[
 		struct bonding *bond = NULL;
 		struct slave *slave = NULL;
