@@ -227,7 +227,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		#include <linux/ethtool.h>
 	],[
 		const struct ethtool_ops en_ethtool_ops = {
-			.get_rxfh_indir_size = NULL,
+			.get_rxfh_key_size = NULL,
 			.get_rxfh = NULL,
 			.set_rxfh = NULL,
 		};
@@ -241,6 +241,60 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ethtool_ops has get_rxfh_indir_size])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_rxfh_indir_size = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RXFH_INDIR_SIZE, 1,
+			[get_rxfh_indir_size is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops_ext has get_rxfh_indir_size])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.get_rxfh_indir_size = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RXFH_INDIR_SIZE_EXT, 1,
+			[get_rxfh_indir_size is defined in ethtool_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get/set_rxfh_indir])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+
+		int mlx4_en_get_rxfh_indir(struct net_device *d, u32 *r)
+		{
+			return 0;
+		}
+	],[
+		struct ethtool_ops en_ethtool_ops;
+		en_ethtool_ops.get_rxfh_indir = mlx4_en_get_rxfh_indir;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_RXFH_INDIR, 1,
+			[get/set_rxfh_indir is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 
 	AC_MSG_CHECKING([if struct ethtool_ops has get/set_tunable])
 	LB_LINUX_TRY_COMPILE([
@@ -277,24 +331,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/ethtool.h>
-	],[
-		const struct ethtool_ops_ext en_ethtool_ops_ext = {
-			.get_rxfh_indir_size = NULL,
-			.get_rxfh = NULL,
-			.set_rxfh = NULL,
-		};
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_GET_SET_RXFH_OPS_EXT, 1,
-			  [get/set_rxfh is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
 
 	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh_indir])
 	LB_LINUX_TRY_COMPILE([
