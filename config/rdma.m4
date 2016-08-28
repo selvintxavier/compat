@@ -331,25 +331,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-
-	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh_indir])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/ethtool.h>
-	],[
-		const struct ethtool_ops_ext en_ethtool_ops_ext = {
-			.get_rxfh_indir = NULL,
-			.set_rxfh_indir = NULL,
-		};
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_GET_SET_RXFH_INDIR, 1,
-			  [get/set_rxfh_indir is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if struct ethtool_ops_ext has get/set_rxfh_indir])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ethtool.h>
@@ -1654,54 +1635,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if linux/timecounter.h exists])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/timecounter.h>
-	],[
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_TIMECOUNTER_H, 1,
-			  [linux/timecounter.h exists])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
-	# timecounter_adjtime can be in timecounter.h or clocksource.h
-	AC_MSG_CHECKING([if linux/timecounter.h has timecounter_adjtime])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/timecounter.h>
-	],[
-		struct timecounter x;
-		s64 y = 0;
-		timecounter_adjtime(&x, y);
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
-			  [timecounter_adjtime is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
-	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/clocksource.h>
-	],[
-		struct timecounter x;
-		s64 y = 0;
-		timecounter_adjtime(&x, y);
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
-			  [timecounter_adjtime is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if struct ethtool_ops has set_dump])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ethtool.h>
@@ -2309,23 +2242,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	])
 
 	# timecounter_adjtime can be in timecounter.h or clocksource.h
-	AC_MSG_CHECKING([if linux/timecounter.h has timecounter_adjtime])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/timecounter.h>
-	],[
-		struct timecounter x;
-		s64 y = 0;
-		timecounter_adjtime(&x, y);
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
-			  [timecounter_adjtime is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/clocksource.h>
