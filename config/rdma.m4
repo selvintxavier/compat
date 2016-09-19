@@ -187,6 +187,38 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if kernel has ktime_get_boot_ns])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ktime.h>
+	],[
+		unsigned long long ns;
+
+		ns = ktime_get_boot_ns();
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KTIME_GET_BOOT_NS, 1,
+			  [ktime_get_boot_ns defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if timekeeping.h has ktime_get_real_ns])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ktime.h>
+		#include <linux/timekeeping.h>
+	],[
+		ktime_get_real_ns();
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KTIME_GET_REAL_NS, 1,
+			  [ktime_get_real_ns is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if svc_xprt_class has xcl_ident])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/sunrpc/xprt.h>
@@ -754,7 +786,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		enum pci_bus_speed speed = PCI_SPEED_UNKNOWN;
 
-		return 0;
+		return speed;
 	],[
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_PCI_BUS_SPEED, 1,
@@ -2327,6 +2359,361 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if include/linux/irq_poll.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/irq_poll.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IRQ_POLL_H, 1,
+			  [include/linux/irq_poll.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/dma-mapping.h has struct dma_attrs])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/dma-mapping.h>
+	],[
+		struct dma_attrs *attrs;
+		int ret;
+
+		ret = dma_get_attr(DMA_ATTR_WRITE_BARRIER, attrs);
+
+		return ret;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_STRUCT_DMA_ATTRS, 1,
+			  [struct dma_attrs is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if pci.h has pcie_get_minimum_link])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		int ret;
+		ret = pcie_get_minimum_link(NULL, NULL, NULL);
+
+		return ret;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCIE_GET_MINIMUM_LINK, 1,
+			  [pcie_get_minimum_link is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_for_each_all_upper_dev_rcu])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev;
+		struct net_device *upper;
+		struct list_head *list;
+
+		netdev_for_each_all_upper_dev_rcu(dev, upper, list);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_FOR_EACH_ALL_UPPER_DEV_RCU, 1,
+			  [netdev_master_upper_dev_get_rcu is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_has_upper_dev])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev;
+		struct net_device *upper;
+		netdev_has_upper_dev(dev, upper);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_HAS_UPPER_DEV, 1,
+			  [netdev_has_upper_dev is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool.h has __ethtool_get_link_ksettings])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		 __ethtool_get_link_ksettings(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE___ETHTOOL_GET_LINK_KSETTINGS, 1,
+			  [__ethtool_get_link_ksettings is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if addrconf.h has addrconf_ifid_eui48])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/addrconf.h>
+	],[
+		int x = addrconf_ifid_eui48(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ADDRCONF_IFID_EUI48, 1,
+			  [addrconf_ifid_eui48 is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h get_user_pages has 6 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		get_user_pages(0, 0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_6_PARAMS, 1,
+			  [get_user_pages has 6 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h get_user_pages_remote])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		get_user_pages_remote(NULL, NULL, 0, 0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_REMOTE, 1,
+			  [get_user_pages_remote exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ip_fib.h fib_lookup has 4 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ip_fib.h>
+	],[
+		fib_lookup(NULL, NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FIB_LOOKUP_4_PARAMS, 1,
+			  [fib_lookup has 4 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/net/devlink.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/devlink.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVLINK_H, 1,
+			  [include/net/devlink.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if io_mapping_map_wc has 3 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/io-mapping.h>
+	],[
+		io_mapping_map_wc(NULL, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IO_MAPPING_MAP_WC_3_PARAMS, 1,
+			  [io_mapping_map_wc has 3 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/net/dcbnl.h struct dcbnl_rtnl_ops has *ieee_getqcn])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+	],[
+		struct dcbnl_rtnl_ops x = {
+			.ieee_getqcn = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IEEE_GETQCN, 1,
+			  [ieee_getqcn is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if dcbnl.h has struct ieee_qcn])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+	],[
+		struct ieee_qcn x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_STRUCT_IEEE_QCN, 1,
+			  [ieee_qcn is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has napi_consume_skb])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		napi_consume_skb(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NAPI_CONSUME_SKB, 1,
+			  [napi_consume_skb is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/linux/bpf.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/bpf.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_BPF_H, 1,
+			  [include/linux/bpf.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm_types.h struct page has _count])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+		#include <linux/mm_types.h>
+	],[
+		struct page p;
+		p._count.counter = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MM_PAGE__COUNT, 1,
+			  [struct page has _count])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/linux/page_ref.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/page_ref.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_PAGE_REF_H, 1,
+			  [include/linux/page_ref.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/ethtool.h has ETHTOOL_xLINKSETTINGS API])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		enum ethtool_link_mode_bit_indices x = ETHTOOL_LINK_MODE_TP_BIT;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_xLINKSETTINGS, 1,
+			  [ETHTOOL_xLINKSETTINGS API is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/printk.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/printk.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_PRINTK_H, 1,
+			  [linux/printk.h is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if printk.h has struct va_format])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/printk.h>
+	],[
+		struct va_format x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VA_FORMAT, 1,
+			  [va_format is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if irq.h irq_data has member affinity])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/irq.h>
+		#include <linux/cpumask.h>
+	],[
+		cpumask_var_t x;
+		struct irq_data y = {
+			.affinity = x,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IRQ_DATA_AFFINITY, 1,
+			  [irq_data member affinity is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if irq.h irq_data_get_affinity_mask])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/irq.h>
+	],[
+		irq_data_get_affinity_mask(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IRQ_DATA_GET_AFFINITY_MASK, 1,
+			  [irq_data_get_affinity_mask exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
