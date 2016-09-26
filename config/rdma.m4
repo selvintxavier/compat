@@ -1277,23 +1277,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if struct net_device_ops has *ndo_setup_tc])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/netdevice.h>
-	],[
-		struct net_device_ops x = {
-			.ndo_setup_tc = NULL,
-		};
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_NDO_SETUP_TC, 1,
-			  [ndo_setup_tc is defined])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if struct net_device_ops has *ndo_rx_flow_steer])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -2710,6 +2693,303 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IRQ_DATA_GET_AFFINITY_MASK, 1,
 			  [irq_data_get_affinity_mask exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netif_tx_napi_add])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netif_tx_napi_add(NULL, NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_TX_NAPI_ADD, 1,
+			  [netif_tx_napi_add is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ndo_setup_tc takes 4 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int mlx4_en_setup_tc(struct net_device *dev, u32 handle,
+							 __be16 protocol, struct tc_to_netdev *tc)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops x = {
+			.ndo_setup_tc = mlx4_en_setup_tc,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SETUP_TC_4_PARAMS, 1,
+			  [ndo_setup_tc takes 4 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if etherdevice.h has alloc_etherdev_mqs, alloc_etherdev_mqs, num_tc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/etherdevice.h>
+		#include <linux/netdevice.h>
+	],[
+		struct net_device x = {
+			.num_tx_queues = 0,
+			.num_tc = 0,
+		};
+		alloc_etherdev_mqs(0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NEW_TX_RING_SCHEME, 1,
+			  [alloc_etherdev_mqs, alloc_etherdev_mqs, num_tc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_set_tx_maxrate])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops x = {
+			.ndo_set_tx_maxrate = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_TX_MAXRATE, 1,
+			  [ndo_set_tx_maxrate is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device has gso_partial_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		dev->gso_partial_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVICE_GSO_PARTIAL_FEATURES, 1,
+			  [gso_partial_features is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan have ndo_add_vxlan_port])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		#if IS_ENABLED(CONFIG_VXLAN)
+		void add_vxlan_port(struct net_device *dev, sa_family_t sa_family, __be16 port)
+		{
+			return 0;
+		}
+		#endif
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_add_vxlan_port = add_vxlan_port;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VXLAN_DYNAMIC_PORT, 1,
+			[ndo_add_vxlan_port is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan has vxlan_get_rx_port])
+	LB_LINUX_TRY_COMPILE([
+		#if IS_ENABLED(CONFIG_VXLAN)
+		#include <net/vxlan.h>
+		#endif
+	],[
+		vxlan_get_rx_port(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VXLAN_ENABLED, 1,
+			  [vxlan_get_rx_port is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan have ndo_udp_tunnel_add])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		#if IS_ENABLED(CONFIG_VXLAN)
+		void udp_tunnel_add(struct net_device *dev, sa_family_t sa_family, __be16 port)
+		{
+			return 0;
+		}
+		#endif
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_udp_tunnel_add = udp_tunnel_add;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_UDP_TUNNEL_ADD, 1,
+			[ndo_udp_tunnel_add is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan has udp_tunnel_get_rx_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/udp_tunnel.h>
+	],[
+		udp_tunnel_get_rx_info(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_UDP_TUNNEL_GET_RX_INFO, 1,
+			  [udp_tunnel_get_rx_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has struct netdev_bonding_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct netdev_bonding_info x;
+		x.master.num_slaves = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_BONDING_INFO, 1,
+			  [netdev_bonding_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has struct netdev_phys_item_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct netdev_phys_item_id x;
+		x.id_len = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_PHYS_ITEM_ID, 1,
+			  [netdev_phys_item_id is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_set_vf_mac])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_mac(struct net_device *dev, int queue, u8 *mac)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_set_vf_mac = set_vf_mac;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_VF_MAC, 1,
+			  [ndo_set_vf_mac is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if getnumtcs returns int])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+
+		static int mlx4_en_dcbnl_getnumtcs(struct net_device *netdev, int tcid, u8 *num)
+
+		{
+			return 0;
+		}
+
+	],[
+		struct dcbnl_rtnl_ops mlx4_en_dcbnl_ops = {
+			.getnumtcs	= mlx4_en_dcbnl_getnumtcs,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(NDO_GETNUMTCS_RETURNS_INT, 1,
+			  [if getnumtcs returns int])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if getapp returns int])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+
+		static int mlx4_en_dcbnl_getapp(struct net_device *netdev, u8 idtype,
+						u16 id)
+		{
+			return 0;
+		}
+	],[
+		struct dcbnl_rtnl_ops mlx4_en_dcbnl_ops = {
+			.getapp		= mlx4_en_dcbnl_getapp,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(NDO_GETAPP_RETURNS_INT, 1,
+			  [if getapp returns int])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if setapp returns int])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+
+		static int mlx4_en_dcbnl_setapp(struct net_device *netdev, u8 idtype,
+						u16 id, u8 up)
+		{
+			return 0;
+		}
+
+	],[
+		struct dcbnl_rtnl_ops mlx4_en_dcbnl_ops = {
+			.setapp		= mlx4_en_dcbnl_setapp,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(NDO_SETAPP_RETURNS_INT, 1,
+			  [if setapp returns int])
 	],[
 		AC_MSG_RESULT(no)
 	])
