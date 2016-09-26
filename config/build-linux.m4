@@ -280,6 +280,7 @@ if (grep -q rhconfig $LINUX_OBJ/include/linux/version.h 2>/dev/null) ||
 fi
 
 # this is needed before we can build modules
+SET_BUILD_ARCH
 LB_LINUX_CROSS
 LB_LINUX_VERSION
 
@@ -336,6 +337,7 @@ case $target_vendor in
 		fi
 		;;
 	*)
+		CROSS_VARS="CROSS_COMPILE=$CROSS_COMPILE"
 		AC_MSG_RESULT([no])
 		;;
 esac
@@ -368,8 +370,9 @@ $2
 #
 AC_DEFUN([LB_LINUX_COMPILE_IFELSE],
 [m4_ifvaln([$1], [AC_LANG_CONFTEST([$1])])dnl
-rm -f build/conftest.o build/conftest.mod.c build/conftest.ko
-AS_IF([AC_TRY_COMMAND(cp conftest.c build && make -d [$2] ${LD:+"LD=$LD"} CC="$CC" -f $PWD/build/Makefile OFA_LINUX_CONFIG=$LINUX_CONFIG LINUXINCLUDE="-include $AUTOCONF_HDIR/autoconf.h $XEN_INCLUDES $EXTRA_OFA_INCLUDE -I$LINUX/arch/$SRCARCH/include -Iarch/$SRCARCH/include/generated -Iinclude -I$LINUX/arch/$SRCARCH/include/uapi -Iarch/$SRCARCH/include/generated/uapi -I$LINUX/include -I$LINUX/include/uapi -Iinclude/generated/uapi  -I$LINUX/arch/$SRCARCH/include -Iarch/$SRCARCH/include/generated -I$LINUX/arch/`echo $target_cpu|sed -e 's/powerpc64/powerpc/' -e 's/x86_64/x86/' -e 's/i.86/x86/'`/include -I$LINUX/arch/`echo $target_cpu|sed -e 's/ppc.*/powerpc/' -e 's/x86_64/x86/' -e 's/i.86/x86/'`/include/generated -I$LINUX_OBJ/include -I$LINUX/include -I$LINUX_OBJ/include2 $CONFIG_INCLUDE_FLAG" -o tmp_include_depends -o scripts -o include/config/MARKER -C $LINUX_OBJ EXTRA_CFLAGS="-Werror-implicit-function-declaration $EXTRA_KCFLAGS" $CROSS_VARS $MODULE_TARGET=$PWD/build) >/dev/null && AC_TRY_COMMAND([$3])],
+MAKE=${MAKE:-make}
+rm -f build/conftest.o build/conftest.mod.c build/conftest.ko build/output.log
+AS_IF([AC_TRY_COMMAND(cp conftest.c build && env $CROSS_VARS $MAKE -d [$2] ${LD:+"LD=$CROSS_COMPILE$LD"} CC="$CROSS_COMPILE$CC" -f $PWD/build/Makefile OFA_LINUX_CONFIG=$LINUX_CONFIG CONFIG_CC_STACKPROTECTOR_STRONG= LINUXINCLUDE="-include $AUTOCONF_HDIR/autoconf.h $XEN_INCLUDES $EXTRA_OFA_INCLUDE -I$LINUX/arch/$SRCARCH/include -Iarch/$SRCARCH/include/generated -Iinclude -I$LINUX/arch/$SRCARCH/include/uapi -Iarch/$SRCARCH/include/generated/uapi -I$LINUX/include -I$LINUX/include/uapi -Iinclude/generated/uapi  -I$LINUX/arch/$SRCARCH/include -Iarch/$SRCARCH/include/generated -I$LINUX/arch/$SRCARCH/include -I$LINUX/arch/$SRCARCH/include/generated -I$LINUX_OBJ/include -I$LINUX/include -I$LINUX_OBJ/include2 $CONFIG_INCLUDE_FLAG" -o tmp_include_depends -o scripts -o include/config/MARKER -C $LINUX_OBJ EXTRA_CFLAGS="-Werror-implicit-function-declaration $EXTRA_KCFLAGS" $CROSS_VARS $MODULE_TARGET=$PWD/build >/dev/null 2>build/output.log; [[[ $? -ne 0 ]]] && cat build/output.log 1>&2 && false || config/warning_filter.sh build/output.log) >/dev/null && AC_TRY_COMMAND([$3])],
 	[$4],
 	[_AC_MSG_LOG_CONFTEST
 m4_ifvaln([$5],[$5])dnl])
@@ -729,43 +732,22 @@ _ACEOF
 # SET_BUILD_ARCH
 #
 AC_DEFUN([SET_BUILD_ARCH],
-[ARCH=${ARCH:-$(uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-			-e s/sun4u/sparc64/ \
-			-e s/arm.*/arm/ -e s/sa110/arm/ \
-			-e s/s390x/s390/ -e s/parisc64/parisc/ \
-			-e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-			-e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ )}
+[
+AC_MSG_CHECKING([for build ARCH])
+SRCARCH=${ARCH:-$(uname -m)}
+SRCARCH=$(echo $SRCARCH | sed -e s/i.86/x86/ \
+			-e s/x86_64/x86/ \
+			-e s/ppc.*/powerpc/ \
+			-e 's/powerpc64/powerpc/' \
+			-e s/aarch64.*/arm64/ \
+			-e s/s390x/s390/)
 
-SRCARCH=${SRCARCH:-$ARCH}
-
-# Additional ARCH settings for x86
-if [[ "$ARCH" == "i386" ]]; then
-	SRCARCH=x86
-fi
-if [[ "$ARCH" == "x86_64" ]]; then
-	SRCARCH=x86
+# very old kernels had different strucure under arch dir
+if [[ "X$SRCARCH" == "Xx86" ]] && ! [[ -d "$LINUX/arch/x86" ]]; then
+	SRCARCH=x86_64
 fi
 
-# Additional ARCH settings for sparc
-if [[ "$ARCH" == "sparc32" ]]; then
-	SRCARCH=sparc
-fi
-if [[ "$ARCH" == "sparc64" ]]; then
-	SRCARCH=sparc
-fi
-
-# Additional ARCH settings for sh
-if [[ "$ARCH" == "sh64" ]]; then
-	SRCARCH=sh
-fi
-
-# Additional ARCH settings for tile
-if [[ "$ARCH" == "tilepro" ]]; then
-	SRCARCH=tile
-fi
-if [[ "$ARCH" == "tilegx" ]]; then
-	SRCARCH=tile
-fi
+AC_MSG_RESULT([ARCH=$ARCH, SRCARCH=$SRCARCH])
 ])
 
 #
