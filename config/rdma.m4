@@ -2994,6 +2994,93 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if linux/inetdevice.h inet_confirm_addr has 5 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/inetdevice.h>
+	],[
+		inet_confirm_addr(NULL, NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INET_CONFIRM_ADDR_5_PARAMS, 1,
+			  [inet_confirm_addr has 5 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_rss_key_fill])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_rss_key_fill(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_RSS_KEY_FILL, 1,
+			  [netdev_rss_key_fill is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_get_vf_stats])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int get_vf_stats(struct net_device *dev, int vf, struct ifla_vf_stats *vf_stats)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_get_vf_stats = get_vf_stats;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_VF_STATS, 1,
+			  [ndo_get_vf_stats is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has ndo_set_vf_guid])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_guid(struct net_device *dev, int vf, u64 guid, int guid_type)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_set_vf_guid = set_vf_guid;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_VF_GUID, 1,
+			  [ndo_set_vf_guid is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netif_trans_update])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netif_trans_update(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_TRANS_UPDATE, 1,
+			  [netif_trans_update is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
