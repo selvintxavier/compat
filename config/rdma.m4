@@ -2487,7 +2487,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 
 	AC_MSG_CHECKING([if ip_fib.h fib_lookup has 4 params])
 	LB_LINUX_TRY_COMPILE([
-		#include <linux/ip_fib.h>
+		#include <net/ip_fib.h>
 	],[
 		fib_lookup(NULL, NULL, NULL, 0);
 
