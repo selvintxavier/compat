@@ -3081,6 +3081,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netdevice.h alloc_netdev_mqs has 6 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		alloc_netdev_mqs(0, NULL, NET_NAME_UNKNOWN, NULL, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ALLOC_NETDEV_MQS_6_PARAMS, 1,
+			  [alloc_netdev_mqs has 6 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if filter.h has XDP])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/filter.h>
+	],[
+		enum xdp_action action = XDP_ABORTED;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FILTER_XDP, 1,
+			  [filter.h has XDP])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
