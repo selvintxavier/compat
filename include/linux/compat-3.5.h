@@ -2,23 +2,13 @@
 #define LINUX_3_5_COMPAT_H
 
 #include <linux/version.h>
-#include <linux/fs.h>
-#include <linux/etherdevice.h>
-#include <linux/net.h>
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0))
 
-/*
- * This backports:
- *
- *   From a3860c1c5dd1137db23d7786d284939c5761d517 Mon Sep 17 00:00:00 2001
- *   From: Xi Wang <xi.wang@gmail.com>
- *   Date: Thu, 31 May 2012 16:26:04 -0700
- *   Subject: [PATCH] introduce SIZE_MAX
- */
-
-#define SIZE_MAX    (~(size_t)0)
-
+#include <linux/kernel.h>
+#include <linux/fs.h>
+#include <linux/etherdevice.h>
+#include <linux/net.h>
 
 #include <linux/pkt_sched.h>
 
@@ -33,6 +23,7 @@
 
 /* CODEL */
 
+#if !defined(CONFIG_TCA_CODEL_UNSPEC)
 enum {
 	TCA_CODEL_UNSPEC,
 	TCA_CODEL_TARGET,
@@ -41,9 +32,11 @@ enum {
 	TCA_CODEL_ECN,
 	__TCA_CODEL_MAX
 };
+#endif
 
 #define TCA_CODEL_MAX	(__TCA_CODEL_MAX - 1)
 
+#if !defined(CONFIG_TC_CODEL_XSTATS)
 struct tc_codel_xstats {
 	__u32	maxpacket; /* largest packet we've seen so far */
 	__u32	count;	   /* how many drops we've done since the last time we
@@ -56,6 +49,7 @@ struct tc_codel_xstats {
 	__u32	ecn_mark;  /* number of packets we ECN marked instead of dropped */
 	__u32	dropping;  /* are we in dropping state ? */
 };
+#endif
 
 /* This backports:
  *
@@ -67,6 +61,7 @@ struct tc_codel_xstats {
 
 /* FQ_CODEL */
 
+#if !defined(CONFIG_TCA_FQ_CODEL_UNSPEC)
 enum {
 	TCA_FQ_CODEL_UNSPEC,
 	TCA_FQ_CODEL_TARGET,
@@ -77,14 +72,18 @@ enum {
 	TCA_FQ_CODEL_QUANTUM,
 	__TCA_FQ_CODEL_MAX
 };
+#endif
 
 #define TCA_FQ_CODEL_MAX	(__TCA_FQ_CODEL_MAX - 1)
 
+#ifndef CONFIG_TCA_FQ_CODEL_XSTATS_QDISC
 enum {
 	TCA_FQ_CODEL_XSTATS_QDISC,
 	TCA_FQ_CODEL_XSTATS_CLASS,
 };
+#endif
 
+#if !defined(CONFIG_TC_FQ_CODEL_QD_STATS)
 struct tc_fq_codel_qd_stats {
 	__u32	maxpacket;	/* largest packet we've seen so far */
 	__u32	drop_overlimit; /* number of time max qdisc
@@ -99,7 +98,9 @@ struct tc_fq_codel_qd_stats {
 	__u32	new_flows_len;	/* count of flows in new list */
 	__u32	old_flows_len;	/* count of flows in old list */
 };
+#endif
 
+#if !defined(CONFIG_TC_FQ_CODEL_CL_STATS)
 struct tc_fq_codel_cl_stats {
 	__s32	deficit;
 	__u32	ldelay;		/* in-queue delay seen by most recently
@@ -110,7 +111,9 @@ struct tc_fq_codel_cl_stats {
 	__u32	dropping;
 	__s32	drop_next;
 };
+#endif
 
+#if !defined(CONFIG_TC_FQ_CODEL_XSTATS)
 struct tc_fq_codel_xstats {
 	__u32	type;
 	union {
@@ -118,8 +121,9 @@ struct tc_fq_codel_xstats {
 		struct tc_fq_codel_cl_stats class_stats;
 	};
 };
+#endif
 
-#ifndef CONFIG_COMPAT_IS_MAXRATE
+#ifndef HAVE_IEEE_GET_SET_MAXRATE
 #ifndef IEEE_8021QAZ_MAX_TCS
 #define IEEE_8021QAZ_MAX_TCS 8
 #endif
@@ -164,14 +168,23 @@ static inline struct ctl_table_header *register_net_sysctl(struct net *net,
 }
 
 #ifndef CONFIG_COMPAT_IS_IP_TOS2PRIO
+#define ip_tos2prio LINUX_BACKPORT(ip_tos2prio)
 extern const __u8 ip_tos2prio[16];
 #endif
 
 #define dev_uc_add_excl LINUX_BACKPORT(dev_uc_add_excl)
+#ifdef CONFIG_COMPAT_DEV_UC_MC_ADD_CONST
+extern int dev_uc_add_excl(struct net_device *dev, const unsigned char *addr);
+#else
 extern int dev_uc_add_excl(struct net_device *dev, unsigned char *addr);
+#endif
 
 #define dev_mc_add_excl LINUX_BACKPORT(dev_mc_add_excl)
+#ifdef CONFIG_COMPAT_DEV_UC_MC_ADD_CONST
+extern int dev_mc_add_excl(struct net_device *dev, const unsigned char *addr);
+#else
 extern int dev_mc_add_excl(struct net_device *dev, unsigned char *addr);
+#endif
 
 #define SK_CAN_REUSE 1
 
@@ -195,6 +208,20 @@ static inline bool ether_addr_equal(const u8 *addr1, const u8 *addr2)
 	return !compare_ether_addr(addr1, addr2);
 }
 
+#include <linux/skbuff.h>
+
+#define skb_end_offset LINUX_BACKPORT(skb_end_offset)
+#ifdef NET_SKBUFF_DATA_USES_OFFSET
+static inline unsigned int skb_end_offset(const struct sk_buff *skb)
+{
+	return skb->end;
+}
+#else
+static inline unsigned int skb_end_offset(const struct sk_buff *skb)
+{
+	return skb->end - skb->head;
+}
+#endif
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)) */
 
 #endif /* LINUX_3_5_COMPAT_H */
