@@ -3112,6 +3112,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if firmware.h has request_firmware_direct])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/firmware.h>
+	],[
+		(void)request_firmware_direct(NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_REQUEST_FIRMWARE_DIRECT, 1,
+			  [firmware.h has request_firmware_direct])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
