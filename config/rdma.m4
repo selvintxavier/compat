@@ -3127,6 +3127,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if pci.h has pci_set_vpd_size])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		(void)pci_set_vpd_size(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_SET_VPD_SIZE, 1,
+			  [pci.h has pci_set_vpd_size])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
