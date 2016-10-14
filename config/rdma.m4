@@ -3180,6 +3180,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if debugfs.h debugfs_create_bool has bool pointer])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/debugfs.h>
+	],[
+		(void)debugfs_create_bool(NULL, 0, NULL, (bool *)0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEBUGFS_CREATE_BOOL_USES_BOOL_PTR, 1,
+			  [debugfs_create_bool has bool pointer])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
