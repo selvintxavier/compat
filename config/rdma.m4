@@ -3157,6 +3157,29 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if string_helpers.h string_get_size has 5 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched.h>
+		#include <linux/bug.h>
+		#include <linux/kernel.h>
+		#include <linux/math64.h>
+		#include <linux/export.h>
+		#include <linux/ctype.h>
+		#include <linux/errno.h>
+		#include <linux/string.h>
+		#include <linux/string_helpers.h>
+	],[
+		(void)string_get_size(0, 0, 0, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_STRING_GET_SIZE_5_PARAMS, 1,
+			  [string_get_size has 5 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
