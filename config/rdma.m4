@@ -3195,6 +3195,246 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if pat_enabled is a function on X86])
+	LB_LINUX_TRY_COMPILE([
+#if defined(CONFIG_X86)
+		#include <asm/pat.h>
+#else
+		#error "Not X86"
+#endif
+	],[
+#if defined(CONFIG_X86)
+		if (pat_enabled())
+			return 0;
+#endif
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PAT_ENABLED_FUNCTION_X86, 1,
+			  [pat_enabled is a function])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/net/switchdev.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/switchdev.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_SWITCHDEV_H, 1,
+			  [include/net/switchdev.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops has ndo_udp_tunnel_add])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		void add_udp_tunnel(struct net_device *dev, struct udp_tunnel_info *ti)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+		netdev_ops.ndo_udp_tunnel_add = add_udp_tunnel;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_UDP_TUNNEL_ADD, 1,
+			[ndo_udp_tunnel_add is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/pkt_cls.h has hardware flower offload support])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		struct tc_cls_flower_offload offload = {0};
+
+		return &offload;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_HW_FLOWER_OFFLOAD_SUPPORT, 1,
+			  [firmware.h has hardware flower offload support])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/netdev_features.h has tc offload feature])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_features_t hw_features = NETIF_F_HW_TC;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_OFFLOAD, 1,
+			  [tc offload is supported])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct skbuff.h has skb_flow_dissect_flow_keys])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		skb_flow_dissect_flow_keys(NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_FLOW_DISSECT_FLOW_KEYS, 1,
+			  [skb_flow_dissect_flow_keys is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if workqueue.h has __cancel_delayed_work])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/workqueue.h>
+	],[
+		__cancel_delayed_work(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE___CANCEL_DELAYED_WORK, 1,
+			  [__cancel_delayed_work is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ethtool_ops has get/set_priv_flags])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_priv_flags = NULL,
+			.set_priv_flags = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_PRIV_FLAGS, 1,
+			  [get/set_priv_flags is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_get_num_tc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_get_num_tc(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_GET_NUM_TC, 1,
+			  [netdev_get_num_tc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops has ndo_set_vf_trust])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int set_vf_trust(struct net_device *dev, int vf, bool setting)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_set_vf_trust = set_vf_trust;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_NDO_SET_VF_TRUST, 1,
+			  [ndo_set_vf_trust is defined in net_device_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdev_features.h has NETIF_F_HW_VLAN_STAG_RX])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdev_features.h>
+	],[
+		netdev_features_t stag = NETIF_F_HW_VLAN_STAG_RX;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_F_HW_VLAN_STAG_RX, 1,
+			[NETIF_F_HW_VLAN_STAG_RX is defined in netdev_features.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct netdevice.h has NETIF_F_RXHASH])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		int x = NETIF_F_RXHASH;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_F_RXHASH, 1,
+			  [NETIF_F_RXHASH is defined in netdevice.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if skbuff.h skb_shared_info has UNION tx_flags])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		struct skb_shared_info x;
+		x.tx_flags.flags = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_SHARED_INFO_UNION_TX_FLAGS, 1,
+			  [skb_shared_info has union tx_flags])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if nelems is atomic_t in struct rhashtable])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/atomic.h>
+		#include <linux/rhashtable.h>
+	],[
+		struct rhashtable *ht;
+		atomic_read(&ht->nelems);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RHASHTABLE_NELEMS_ATOMIC_T, 1,
+			  [nelems is atomic_t in struct rhashtable])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	LB_CHECK_SYMBOL_EXPORT([pat_enabled],
+		[arch/x86/mm/pat.c],
+		[AC_DEFINE(HAVE_PAT_ENABLED_EXPORTED, 1,
+			[pat_enabled is exported by the kernel])],
+	[])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
