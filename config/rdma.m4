@@ -3435,6 +3435,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 			[pat_enabled is exported by the kernel])],
 	[])
 
+	AC_MSG_CHECKING([if configfs.h default_groups is list_head])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/configfs.h>
+	],[
+		struct config_group x = {
+			.group_entry = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CONFIGFS_DEFAULT_GROUPS_LIST, 1,
+			  [default_groups is list_head])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
