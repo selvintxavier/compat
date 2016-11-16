@@ -3415,6 +3415,7 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	AC_MSG_CHECKING([if nelems is atomic_t in struct rhashtable])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/atomic.h>
+		#include <linux/poison.h>
 		#include <linux/rhashtable.h>
 	],[
 		struct rhashtable *ht;
@@ -3448,6 +3449,49 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_CONFIGFS_DEFAULT_GROUPS_LIST, 1,
 			  [default_groups is list_head])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool.h enum ethtool_link_mode_bit_indices has ETHTOOL_LINK_MODE_50000baseSR2_Full_BIT])
+	LB_LINUX_TRY_COMPILE([
+		#include <uapi/linux/ethtool.h>
+	],[
+		enum ethtool_link_mode_bit_indices x = ETHTOOL_LINK_MODE_50000baseSR2_Full_BIT;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHTOOL_LINK_MODE_50000baseSR2_Full_BIT, 1,
+			  [ETHTOOL_LINK_MODE_50000baseSR2_Full_BIT is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/net/flow_dissector.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/flow_dissector.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_FLOW_DISSECTOR_H, 1,
+			  [include/net/flow_dissector.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/linux/dcache.h has d_inode])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/dcache.h>
+	],[
+		struct inode *inode = d_inode(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_D_INODE, 1,
+			[d_inode is defined in dcache.h])
 	],[
 		AC_MSG_RESULT(no)
 	])

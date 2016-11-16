@@ -4,6 +4,7 @@
 #include <linux/version.h>
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0))
+#include <linux/netdevice.h>
 
 #ifndef AF_IB
 #define AF_IB		27      /* Native InfiniBand address    */
