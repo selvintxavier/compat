@@ -3496,6 +3496,66 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if net/pkt_cls.h has tcf_exts_to_list])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		tcf_exts_to_list(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_EXTS_TO_LIST, 1,
+			  [tcf_exts_to_list is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/act_api.h has tcf_action_stats_update])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/act_api.h>
+	],[
+		tcf_action_stats_update(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_ACTION_STATS_UPDATE, 1,
+			  [tcf_action_stats_update is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_mirred.h has is_tcf_mirred_redirect])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_mirred.h>
+	],[
+		is_tcf_mirred_redirect(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IS_TCF_MIRRED_REDIRECT, 1,
+			  [is_tcf_mirred_redirect is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if enum tc_fl_command has TC_CLSFLOWER_STATS])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		enum tc_fl_command x = TC_CLSFLOWER_STATS;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_CLSFLOWER_STATS, 1,
+			  [TC_CLSFLOWER_STATS is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
