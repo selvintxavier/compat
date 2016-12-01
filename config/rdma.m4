@@ -3703,6 +3703,37 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if if_vlan.h has __vlan_get_protocol])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		__vlan_get_protocol(NULL, 0, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VLAN_GET_PROTOCOL, 1,
+			  [__vlan_get_protocol defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_notifier_changeupper_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct netdev_notifier_changeupper_info info;
+
+		info.master = 1;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_NOTIFIER_CHANGEUPPER_INFO, 1,
+			  [netdev_notifier_changeupper_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
