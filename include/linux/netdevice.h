@@ -26,6 +26,15 @@
 #define netdev_master_upper_dev_get_rcu(x) (x)->master
 #endif
 
+#ifndef HAVE_NETIF_KEEP_DST
+/* This device needs to keep skb dst for qdisc enqueue or ndo_start_xmit() */
+static inline void netif_keep_dst(struct net_device *dev)
+{
+	/* IFF_XMIT_DST_RELEASE_PERM   = 1<<17 */
+	dev->priv_flags &= ~(IFF_XMIT_DST_RELEASE | (1<<17) );
+}
+#endif
+
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 18)
 #ifdef HAVE_ALLOC_ETHERDEV_MQ
 #ifndef HAVE_NETIF_SET_REAL_NUM_TX_QUEUES

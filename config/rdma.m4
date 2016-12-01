@@ -3556,6 +3556,153 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if time64.h has ns_to_timespec64])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/clocksource.h>
+		#include <linux/time64.h>
+	],[
+		ns_to_timespec64(0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NS_TO_TIMESPACE64, 1,
+			  [ns_to_timespec64 is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ptp_clock_info has gettime])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ptp_clock_kernel.h>
+	],[
+		struct ptp_clock_info info = {
+			.gettime = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PTP_CLOCK_INFO_GETTIME_32BIT, 1,
+			  [gettime 32bit is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool.h has get_module_eeprom])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		struct ethtool_ops x = {
+			.get_module_eeprom = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_MODULE_EEPROM, 1,
+			  [HAVE_GET_MODULE_EEPROM is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool.h has get_module_eeprom])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		struct ethtool_ops_ext x = {
+			.get_module_eeprom = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_MODULE_EEPROM_EXT, 1,
+			[HAVE_GET_MODULE_EEPROM_EXT is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has napi_complete_done])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		napi_complete_done(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NAPI_COMPLETE_DONE, 1,
+			  [napi_complete_done is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if ethtool_ext has set_phys_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops_ext en_ethtool_ops_ext = {
+			.set_phys_id = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SET_PHYS_ID_EXT, 1,
+			  [set_phys_id is defined in ethtool_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct tc_cls_flower_offload exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		struct tc_cls_flower_offload x;
+		x = x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_FLOWER_OFFLOAD, 1,
+			  [struct tc_cls_flower_offload is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if if_vlan.h has vlan_features_check])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		vlan_features_check(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VLAN_FEATURES_CHECK, 1,
+			  [vlan_features_check is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_get_iflink])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops x = {
+			.ndo_get_iflink = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_IFLINK, 1,
+			  [ndo_get_iflink is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS

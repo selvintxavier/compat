@@ -36,6 +36,12 @@ int cpumask_set_cpu_local_first(int i, int numa_node, cpumask_t *dstp);
 #define RPC_MAXCWND(xprt)	((xprt)->max_reqs << RPC_CWNDSHIFT)
 #define RPCXPRT_CONGESTED(xprt) ((xprt)->cong >= (xprt)->cwnd)
 
+#include <linux/netdev_features.h>
+
+#ifndef NETIF_F_GSO_UDP_TUNNEL_CSUM
+#define NETIF_F_GSO_UDP_TUNNEL_CSUM 0
+#endif
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)) */
 
 #endif /* LINUX_3_16_COMPAT_H */
