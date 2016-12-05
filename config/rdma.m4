@@ -3734,6 +3734,112 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if blk-mq.h has blk_mq_unique_tag])
+	LB_LINUX_TRY_COMPILE([
+		#include <blk-mq.h>
+	],[
+		blk_mq_unique_tag(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BLK_MQ_UNIQUE_TAG, 1,
+				[blk_mq_unique_tag exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if blk_queue_virt_boundary exist])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/blkdev.h>
+	],[
+		blk_queue_virt_boundary(NULL, 0);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BLK_QUEUE_VIRT_BOUNDARY, 1,
+				[blk_queue_virt_boundary exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has scsi_change_queue_depth])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		scsi_change_queue_depth(NULL, 0);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSCI_CHANGE_QUEUE_DEPTH, 1,
+			[scsi_change_queue_depth exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct Scsi_Host has member nr_hw_queues])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct Scsi_Host sh = {
+			.nr_hw_queues = 0,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_NR_HW_QUEUES, 1,
+				[Scsi_Host has members nr_hw_queues])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct scsi_host_template has member track_queue_depth])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct scsi_host_template sh = {
+			.track_queue_depth = 0,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_TEMPLATE_TRACK_QUEUE_DEPTH, 1,
+			[scsi_host_template has members track_queue_depth])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has SCSI_SCAN_INITIAL])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		int x = SCSI_SCAN_INITIAL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_SCAN_INITIAL, 1,
+			  [SCSI_SCAN_INITIAL is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi.h has SG_MAX_SEGMENTS])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi.h>
+	],[
+		int x = SG_MAX_SEGMENTS;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SG_MAX_SEGMENTS, 1,
+			  [SG_MAX_SEGMENTS is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
