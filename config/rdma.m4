@@ -3840,6 +3840,68 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct file_operations has write_iter])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/fs.h>
+	],[
+		const struct file_operations fo = {
+			.write_iter = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FILE_OPS_WRITE_ITER, 1,
+			[write_iter is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/fs.h has inode_lock])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/fs.h>
+	],[
+		inode_lock(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INODE_LOCK, 1,
+			[inode_lock is defined in fs.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/dcache.h has simple_positive])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/dcache.h>
+	],[
+		int i = simple_positive(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SIMPLE_POSITIVE, 1,
+			[simple_positive is defined in dcache.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if __GFP_RECLAIM is defined])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/gfp.h>
+	],[
+		gfp_t rc = __GFP_RECLAIM;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GFP_RECLAIM, 1,
+			[__GFP_RECLAIM is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
