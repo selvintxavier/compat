@@ -2259,6 +2259,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	# timecounter_adjtime can be in timecounter.h or clocksource.h
 	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
 	LB_LINUX_TRY_COMPILE([
+		#include <linux/timecounter.h>
+	],[
+		struct timecounter x;
+		s64 y = 0;
+		timecounter_adjtime(&x, y);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIMECOUNTER_ADJTIME, 1,
+			  [timecounter_adjtime is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/clocksource.h has timecounter_adjtime])
+	LB_LINUX_TRY_COMPILE([
 		#include <linux/clocksource.h>
 	],[
 		struct timecounter x;
@@ -3898,6 +3915,51 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_GFP_RECLAIM, 1,
 			[__GFP_RECLAIM is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has napi_schedule_irqoff])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		napi_schedule_irqoff(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NAPI_SCHEDULE_IRQOFF, 1,
+			  [napi_schedule_irqoff is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if skbuff.h has dev_alloc_pages])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		dev_alloc_pages(0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEV_ALLOC_PAGES, 1,
+			  [dev_alloc_pages is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if skbuff.h has napi_alloc_skb])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		napi_alloc_skb(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NAPI_ALLOC_SKB, 1,
+			  [napi_alloc_skb is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])

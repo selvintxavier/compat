@@ -57,6 +57,7 @@ compat-$(CONFIG_COMPAT_KERNEL_3_15) += compat-3.15.o
 compat-$(CONFIG_COMPAT_KERNEL_3_16) += compat-3.16.o
 compat-$(CONFIG_COMPAT_KERNEL_3_18) += compat-3.18.o
 compat-$(CONFIG_COMPAT_KERNEL_4_0) += compat-4.0.o
+compat-$(CONFIG_COMPAT_KERNEL_4_1) += compat-4.1.o
 
 compat-$(CONFIG_COMPAT_CORDIC) += cordic.o
 compat-$(CONFIG_COMPAT_CRC8) += crc8.o
