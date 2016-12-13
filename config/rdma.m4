@@ -3268,21 +3268,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if net/pkt_cls.h has hardware flower offload support])
-	LB_LINUX_TRY_COMPILE([
-		#include <net/pkt_cls.h>
-	],[
-		struct tc_cls_flower_offload offload = {0};
-
-		return &offload;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_HW_FLOWER_OFFLOAD_SUPPORT, 1,
-			  [firmware.h has hardware flower offload support])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if linux/netdev_features.h has tc offload feature])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
