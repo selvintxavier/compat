@@ -2411,6 +2411,33 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if linux/printk.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/printk.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_PRINTK_H, 1,
+			  [linux/printk.h is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/flow_keys.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+		#include <net/flow_keys.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_FLOW_KEYS_H, 1,
+			  [net/flow_keys.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
