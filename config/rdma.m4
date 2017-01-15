@@ -2438,6 +2438,181 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if svc_xprt.h struct svc_xprt_ops has *xpo_secure_port])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/svc_xprt.h>
+	],[
+		struct svc_xprt_ops x = {
+			.xpo_secure_port = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XPO_SECURE_PORT, 1,
+			  [xpo_secure_port is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if svc_xprt.h svc_xprt_init has 4 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/svc_xprt.h>
+	],[
+		svc_xprt_init(NULL, NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SVC_XPRT_INIT_4_PARAMS, 1,
+			  [svc_xprt_init has 4 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if svcxprt_rdma has sc_reader])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/svc_rdma.h>
+	],[
+		struct svcxprt_rdma x = {
+			.sc_reader = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SVCXPRT_RDMA_SC_READER, 1,
+			  [sc_reader defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if svc.h struct svc_rqst has member rq_next_page])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/svc.h>
+	],[
+		struct svc_rqst x;
+		x.rq_next_page = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RQ_NEXT_PAGE, 1,
+			  [rq_next_page is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if svc_rdma.h has svc_rdma_rcl_chunk_counts])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/svc_rdma.h>
+	],[
+		svc_rdma_rcl_chunk_counts(NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SVC_RDMA_RCL_CHUNK_COUNTS, 1,
+			  [svc_rdma_rcl_chunk_counts defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if highmem.h kmap_atomic has 1 param])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/highmem.h>
+	],[
+		kmap_atomic(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KMAP_ATOMIC_1_PARAM, 1,
+			  [kmap_atomic has 1 parameter])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if xprt.h rpc_xprt_ops.connect has 2 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/xprt.h>
+
+		static void xprt_rdma_connect(struct rpc_xprt *xprt, struct rpc_task *task)
+		{
+			return;
+		}
+	],[
+		struct rpc_xprt_ops x = {
+			.connect = xprt_rdma_connect,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RPC_XPRT_OPS_CONNECT_2_PARAMS, 1,
+			  [rpc_xprt_ops.connect has 2 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/sunrpc/addr.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/addr.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SUNRPC_ADDR_H, 1,
+			  [linux/sunrpc/addr.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if xprt.h xprt_alloc has 3 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/xprt.h>
+	],[
+		xprt_alloc(NULL, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XPRT_ALLOC_HAS_3_PARAMS, 1,
+			  [xprt_alloc has 3 params is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if xprt.h xprt_alloc has 4 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/xprt.h>
+	],[
+		xprt_alloc(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XPRT_ALLOC_HAS_4_PARAMS, 1,
+			  [xprt_alloc has 4 params is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if xprt.h struct rpc_xprt has xprt_alloc_slot])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sunrpc/xprt.h>
+	],[
+		xprt_alloc_slot(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XPRT_ALLOC_SLOT, 1,
+			  [xprt_alloc_slot is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
