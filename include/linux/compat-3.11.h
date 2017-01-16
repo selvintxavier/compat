@@ -27,5 +27,21 @@ enum {
 };
 #endif
 
+#include <linux/scatterlist.h>
+
+#define sg_copy_from_buffer LINUX_BACKPORT(sg_copy_from_buffer)
+size_t sg_copy_from_buffer(struct scatterlist *sgl, unsigned int nents,
+			   void *buf, size_t buflen);
+#define sg_copy_to_buffer LINUX_BACKPORT(sg_copy_to_buffer)
+size_t sg_copy_to_buffer(struct scatterlist *sgl, unsigned int nents,
+			 void *buf, size_t buflen);
+
+#define sg_pcopy_from_buffer LINUX_BACKPORT(sg_pcopy_from_buffer)
+size_t sg_pcopy_from_buffer(struct scatterlist *sgl, unsigned int nents,
+			    void *buf, size_t buflen, off_t skip);
+#define sg_pcopy_to_buffer LINUX_BACKPORT(sg_pcopy_to_buffer)
+size_t sg_pcopy_to_buffer(struct scatterlist *sgl, unsigned int nents,
+			  void *buf, size_t buflen, off_t skip);
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0)) */
 #endif /* LINUX_3_11_COMPAT_H */

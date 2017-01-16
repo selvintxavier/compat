@@ -398,6 +398,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netdev_extended has dev_port])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		netdev_extended(dev)->dev_port = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_EXTENDED_DEV_PORT, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct ptp_clock_info has n_pins])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ptp_clock_kernel.h>
@@ -3945,6 +3962,91 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_NAPI_ALLOC_SKB, 1,
 			  [napi_alloc_skb is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+    AC_MSG_CHECKING([if netlink.h has netlink_capable])
+    LB_LINUX_TRY_COMPILE([
+            #include <linux/netlink.h>
+    ],[
+            bool b = netlink_capable(NULL, 0);
+
+            return 0;
+    ],[
+            AC_MSG_RESULT(yes)
+            AC_DEFINE(HAVE_NETLINK_CAPABLE, 1,
+                      [netlink_capable is defined])
+    ],[
+            AC_MSG_RESULT(no)
+    ])
+
+	AC_MSG_CHECKING([if netlink.h netlink_skb_parms has sk])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netlink.h>
+	],[
+		struct netlink_skb_parms nsp = {
+			.sk = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETLINK_SKB_PARMS_SK, 1,
+			  [netlink_skb_params has sk])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if etherdevice.h has ether_addr_copy])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/etherdevice.h>
+	],[
+		ether_addr_copy(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ETHER_ADDR_COPY, 1,
+			  [ether_addr_copy is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct dcbnl_rtnl_ops has get/set ets and dcbnl defined])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+	],[
+		const struct dcbnl_rtnl_ops en_dcbnl_ops = {
+			.ieee_getets = NULL,
+			.ieee_setets = NULL,
+		};
+
+		struct net_device dev = {
+			.dcbnl_ops = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IEEE_DCBNL_ETS, 1,
+			  [ieee_getets/ieee_setets is defined and dcbnl defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if kernel.h has reciprocal_scale])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/kernel.h>
+	],[
+		reciprocal_scale(0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RECIPROCAL_SCALE, 1,
+			  [reciprocal_scale is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
