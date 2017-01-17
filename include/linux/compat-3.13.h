@@ -6,6 +6,8 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
 
+#include <linux/sched/prio.h>
+
 #ifndef HAVE_REINIT_COMPLETION
 #define HAVE_REINIT_COMPLETION
 

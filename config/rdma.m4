@@ -4051,6 +4051,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if MIN_NICE is defined in prio.h])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched/prio.h>
+	],[
+		long nice = MIN_NICE;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MIN_NICE, 1,
+			[MIN_NICE is defined in prio.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
