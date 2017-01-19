@@ -4051,6 +4051,266 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if libiscsi.h struct iscsi_session has member discovery_sess])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/libiscsi.h>
+	],[
+		struct iscsi_session iscsi_sess = {
+			.discovery_sess = 0,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DISCOVERY_SESSION, 1,
+			  [discovery_sess is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if iscsi_proto.h has structure iscsi_cmd])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/iscsi_proto.h>
+	],[
+		struct iscsi_cmd hdr;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_CMD, 1,
+			  [iscsi_proto.h has structure iscsi_cmd])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h struct scsi_device has u64 lun])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		struct scsi_device sdev = {
+			.lun = 0,
+		};
+
+		pr_err("lun %llu", sdev.lun);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_DEVICE_U64_LUN, 1,
+			  [scsi_device.h struct scsi_device has u64 lun])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_transport_iscsi.h struct iscsi_transport has member check_protection])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_transport_iscsi.h>
+	],[
+		struct iscsi_transport iscsi_iser_transport = {
+			.check_protection = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_TRANSPORT_CHECK_PROTECTION, 1,
+			  [check_protection is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+    AC_MSG_CHECKING([if iscsi_transport.h struct iscsit_transport has member iscsit_get_sup_prot_ops])
+	LB_LINUX_TRY_COMPILE([
+		#include <target/iscsi/iscsi_transport.h>
+
+		enum target_prot_op get_sup_prot_ops(struct iscsi_conn *conn)
+		{
+			return 0;
+		}
+
+	],[
+		struct iscsit_transport it = {
+			.iscsit_get_sup_prot_ops = get_sup_prot_ops,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSIT_TRANSPORT_HAS_GET_SUP_PROT_OPS, 1,
+			[iscsit_transport has member iscsit_get_sup_prot_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if highmem.h has kmap_atomic function with km_type])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/highmem.h>
+	],[
+		kmap_atomic(NULL, KM_USER0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KM_TYPE, 1,
+			  [highmem.h has kmap_atomic function with km_type])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if blkdev.h has flag QUEUE_FLAG_SG_GAPS])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/blkdev.h>
+	],[
+		int flag = QUEUE_FLAG_SG_GAPS;
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_QUEUE_FLAG_SG_GAPS, 1,
+			[blkdev.h has flag QUEUE_FLAG_SG_GAPS])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has scsi_change_queue_depth])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		scsi_change_queue_depth(NULL, 0);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_CHANGE_QUEUE_DEPTH, 1,
+			[scsi_change_queue_depth exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_cmnd.h struct scsi_cmnd  has member prot_flags])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_cmnd.h>
+	],[
+		struct scsi_cmnd sc = {
+			.prot_flags = 0,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_CMND_PROT_FLAGS, 1,
+			[scsi_cmnd has members prot_flags])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct scsi_host_template has member change_queue_type])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct scsi_host_template sh = {
+			.change_queue_type = 0,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_TEMPLATE_CHANGE_QUEUE_TYPE, 1,
+			[scsi_host_template has members change_queue_type])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct scsi_host_template has member use_blk_tags])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct scsi_host_template sh = {
+			.use_blk_tags = 0,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_TEMPLATE_USE_BLK_TAGS, 1,
+			[scsi_host_template has members use_blk_tags])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct scsi_host_template has member use_host_wide_tags])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct scsi_host_template sh = {
+			.use_host_wide_tags = 0,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_TEMPLATE_USE_HOST_WIDE_TAGS, 1,
+			[scsi_host_template has members use_host_wide_tags])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_host.h struct Scsi_Host has member use_blk_mq])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_host.h>
+	],[
+		struct Scsi_Host sh = {
+			.use_blk_mq = 0,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_HOST_USE_BLK_MQ, 1,
+				[Scsi_Host has members use_blk_mq])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_tcq.h has function scsi_change_queue_type])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_tcq.h>
+	],[
+		scsi_change_queue_type(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_TCQ_SCSI_CHANGE_QUEUE_TYPE, 1,
+			[scsi_tcq.h has function scsi_change_queue_type])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_tcq.h has function scsi_init_shared_tag_map])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_tcq.h>
+	],[
+		scsi_init_shared_tag_map(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_TCQ_SCSI_INIT_SHARED_TAG_MAP, 1,
+			[scsi_tcq.h has function scsi_init_shared_tag_map])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_transfer_length is defind])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_cmnd.h>
+	],[
+		scsi_transfer_length(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_TRANSFER_LENGTH, 1,
+			  [scsi_transfer_length is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
