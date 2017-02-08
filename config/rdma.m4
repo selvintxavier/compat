@@ -3737,6 +3737,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if if_vlan.h has skb_vlan_tagged])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_vlan.h>
+	],[
+		skb_vlan_tagged(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_VLAN_TAGGED, 1,
+			  [skb_vlan_tagged defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if netdevice.h has netdev_notifier_changeupper_info])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
