@@ -903,6 +903,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netdevice.h has __dev_uc_sync])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		__dev_uc_sync(NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE___DEV_UC_SYNC, 1,
+			  [__dev_uc_sync is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has __dev_mc_sync])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		__dev_mc_sync(NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE___DEV_MC_SYNC, 1,
+			  [__dev_mc_sync is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if netdevice.h has netdev_txq_bql_complete_prefetchw])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -2174,6 +2204,20 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IDR_NEW_INTERFACE, 1,
 			  [idr_Alloc is defined]) ],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if idr.h has idr_is_empty])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/idr.h>
+	],[
+		bool x = idr_is_empty(NULL);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IDR_IS_EMPTY, 1,
+			  [idr_is_empty is defined])
+	],[
 		AC_MSG_RESULT(no)
 	])
 
