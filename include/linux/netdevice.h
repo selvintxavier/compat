@@ -108,4 +108,18 @@ static inline void netif_trans_update(struct net_device *dev)
 }
 #endif
 
+#ifdef HAVE_REGISTER_NETDEVICE_NOTIFIER_RH
+#define register_netdevice_notifier register_netdevice_notifier_rh
+#define unregister_netdevice_notifier unregister_netdevice_notifier_rh
+#endif
+
+#ifndef HAVE_NETDEV_NOTIFIER_INFO_TO_DEV
+#define netdev_notifier_info_to_dev LINUX_BACKPORT(netdev_notifier_info_to_dev)
+static inline struct net_device *
+netdev_notifier_info_to_dev(void *ptr)
+{
+	return (struct net_device *)ptr;
+}
+#endif
+
 #endif	/* _COMPAT_LINUX_NETDEVICE_H */

@@ -4326,6 +4326,32 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if has netdev_notifier_info_to_dev])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/netdevice.h>
+	],[
+		return netdev_notifier_info_to_dev(NULL) ? 1 : 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_NOTIFIER_INFO_TO_DEV, 1,
+			[netdev_notifier_info_to_dev is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm has register_netdevice_notifier_rh])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/netdevice.h>
+	],[
+		return register_netdevice_notifier_rh(NULL);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_REGISTER_NETDEVICE_NOTIFIER_RH, 1,
+			[register_netdevice_notifier_rh is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS
