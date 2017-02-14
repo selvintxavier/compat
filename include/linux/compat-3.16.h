@@ -42,6 +42,56 @@ int cpumask_set_cpu_local_first(int i, int numa_node, cpumask_t *dstp);
 #define NETIF_F_GSO_UDP_TUNNEL_CSUM 0
 #endif
 
+#if !defined(HAVE___DEV_UC_SYNC) && !defined(HAVE___DEV_MC_SYNC)
+
+#include <linux/netdevice.h>
+
+#define __hw_addr_sync_dev LINUX_BACKPORT(__hw_addr_sync_dev)
+int __hw_addr_sync_dev(struct netdev_hw_addr_list *list,
+                       struct net_device *dev,
+                       int (*sync)(struct net_device *, const unsigned char *),
+                       int (*unsync)(struct net_device *,
+                                     const unsigned char *));
+
+/**
+ *  __dev_uc_sync - Synchonize device's unicast list
+ *  @dev:  device to sync
+ *  @sync: function to call if address should be added
+ *  @unsync: function to call if address should be removed
+ *
+ *  Add newly added addresses to the interface, and release
+ *  addresses that have been deleted.
+ */
+#define __dev_uc_sync LINUX_BACKPORT(__dev_uc_sync)
+static inline int __dev_uc_sync(struct net_device *dev,
+                                int (*sync)(struct net_device *,
+                                            const unsigned char *),
+                                int (*unsync)(struct net_device *,
+                                              const unsigned char *))
+{
+        return __hw_addr_sync_dev(&dev->uc, dev, sync, unsync);
+}
+
+/**
+ *  __dev_mc_sync - Synchonize device's multicast list
+ *  @dev:  device to sync
+ *  @sync: function to call if address should be added
+ *  @unsync: function to call if address should be removed
+ *
+ *  Add newly added addresses to the interface, and release
+ *  addresses that have been deleted.
+ */
+#define __dev_mc_sync LINUX_BACKPORT(__dev_mc_sync)
+static inline int __dev_mc_sync(struct net_device *dev,
+                                int (*sync)(struct net_device *,
+                                            const unsigned char *),
+                                int (*unsync)(struct net_device *,
+                                              const unsigned char *))
+{
+        return __hw_addr_sync_dev(&dev->mc, dev, sync, unsync);
+}
+#endif
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)) */
 
 #endif /* LINUX_3_16_COMPAT_H */
