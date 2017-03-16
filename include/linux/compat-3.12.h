@@ -2,7 +2,7 @@
 #define LINUX_3_12_COMPAT_H
 
 #include <linux/version.h>
-#include <../../compat/config.h>
+#include "../../compat/config.h"
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0))
 
