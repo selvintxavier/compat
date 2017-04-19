@@ -1,7 +1,7 @@
 #ifndef _COMPAT_LINUX_PRIO_H
 #define _COMPAT_LINUX_PRIO_H 1
 
-#include "../../compat/config.h"
+#include "../../../compat/config.h"
 
 #ifdef HAVE_MIN_NICE
 #include_next <linux/sched/prio.h>
