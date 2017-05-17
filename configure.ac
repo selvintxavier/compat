@@ -16,3 +16,15 @@ SET_BUILD_ARCH
 LB_PROG_CC
 OFA_PROG_LINUX
 LB_CONDITIONALS
+
+#
+#       cleanup auto-generated defines
+#
+sed -i '/\<PACKAGE\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_BUGREPORT\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_NAME\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_STRING\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_TARNAME\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_URL\>/d' $PWD/config.h
+sed -i '/\<PACKAGE_VERSION\>/d' $PWD/config.h
+sed -i '/\<VERSION\>/d' $PWD/config.h
