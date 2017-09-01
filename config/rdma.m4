@@ -3499,6 +3499,12 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 			[pat_enabled is exported by the kernel])],
 	[])
 
+	LB_CHECK_SYMBOL_EXPORT([xprt_put],
+		[net/sunrpc/xprt.c],
+		[AC_DEFINE(HAVE_XPRT_PUT_EXPORTED, 1,
+			[xprt_put is exported by the kernel])],
+	[])
+
 	AC_MSG_CHECKING([if configfs.h default_groups is list_head])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/configfs.h>
