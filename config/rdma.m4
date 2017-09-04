@@ -4417,6 +4417,18 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if has pci_is_bridge])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/pci.h>
+	],[
+		return pci_is_bridge(NULL);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_IS_BRIDGE, 1,
+			[pci_is_bridge is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
