@@ -254,6 +254,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netdev_master_upper_dev_link gets 4 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_master_upper_dev_link(NULL, NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(NETDEV_MASTER_UPPER_DEV_LINK_4_PARAMS, 1,
+			  [netdev_master_upper_dev_link gets 4 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct ethtool_ops has get/set_rxfh])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ethtool.h>
@@ -1479,6 +1494,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_NET_DEVICE_OPS_EXT, 1,
 			  [struct net_device_ops_ext is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops_extended exist])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_extended ops_extended;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DEVICE_OPS_EXTENDED, 1,
+			  [struct net_device_ops_extended is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -2791,6 +2821,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct net_device_ops has *ndo_setup_tc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops x = {
+			.ndo_setup_tc = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SETUP_TC, 1,
+			  [ndo_setup_tc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if ndo_setup_tc takes 4 parameters])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -3641,6 +3688,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ptp_clock_info exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ptp_clock_kernel.h>
+	],[
+		struct ptp_clock_info info;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PTP_CLOCK_INFO, 1,
+			  [ptp_clock_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct ptp_clock_info has gettime])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/ptp_clock_kernel.h>
@@ -4426,6 +4488,139 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_PCI_IS_BRIDGE, 1,
 			[pci_is_bridge is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct ifla_vf_info has vlan_proto])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_link.h>
+	],[
+		struct ifla_vf_info *ivf;
+
+		ivf->vlan_proto = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VF_VLAN_PROTO, 1,
+			  [vlan_proto is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if alloc_etherdev_mq is defined])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/etherdevice.h>
+	],[
+		alloc_etherdev_mq(0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ALLOC_ETHERDEV_MQ, 1,
+			  [alloc_etherdev_mq is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has ndo_get_phys_port_name])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops ndops = {
+			.ndo_get_phys_port_name = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_PHYS_PORT_NAME, 1,
+			  [ndo_get_phys_port_name is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has ndo_set_vf_vlan])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops = {
+			.ndo_set_vf_vlan = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_VF_VLAN, 1,
+			  [ndo_set_vf_vlan is defined in net_device_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops_extended has ndo_set_vf_vlan])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_extended netdev_ops_extended = {
+			.ndo_set_vf_vlan = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_SET_VF_VLAN_EXTENDED, 1,
+			  [ndo_set_vf_vlan is defined in net_device_ops_extended])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_ext has ndo_set_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+
+		netdev_ops_ext.ndo_set_features = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_EXT_NDO_SET_FEATURES, 1,
+			  [ndo_set_features is defined in net_device_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_ext has ndo_fix_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_ext netdev_ops_ext;
+
+		netdev_ops_ext.ndo_fix_features = NULL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_OPS_EXT_NDO_FIX_FEATURES, 1,
+			  [ndo_fix_features is defined in net_device_ops_ext])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netif_set_real_num_tx_queues])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		netif_set_real_num_tx_queues(&dev, 2);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_SET_REAL_NUM_TX_QUEUES, 1,
+			  [netif_set_real_num_tx_queues is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
