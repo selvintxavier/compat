@@ -10,6 +10,6 @@ static inline u64 ktime_get_ns(void)
 {
 	return ktime_to_ns(ktime_get());
 }
-#endif /* HAVE_KTIME_TO_NS */
+#endif
 
 #endif /* COMPAT_LINUX_TIMEKEEPING_H */
