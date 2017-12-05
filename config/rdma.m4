@@ -4624,6 +4624,126 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if mm.h get_user_pages has 8 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		get_user_pages(NULL, NULL, 0, 0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_8_PARAMS, 1,
+			[get_user_pages has 8 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if get_user_pages uses gup flags])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		unsigned long start;
+		unsigned long nr_pages;
+		unsigned int gup_flags;
+		struct page **page_list;
+		struct vm_area_struct **vmas;
+		int ret;
+
+		ret = get_user_pages(start, nr_pages, gup_flags, page_list,
+					vmas);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_GUP_FLAGS, 1,
+			[get_user_pages uses gup_flags])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm has get_user_pages_remote with 7 parameters])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/mm.h>
+	],[
+		get_user_pages_remote(NULL, NULL, 0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_REMOTE_7_PARAMS, 1,
+			[get_user_pages_remote is defined with 7 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm has get_user_pages_remote with 8 parameters])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/mm.h>
+	],[
+		get_user_pages_remote(NULL, NULL, 0, 0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_REMOTE_8_PARAMS, 1,
+			[get_user_pages_remote is defined with 8 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm has get_user_pages_remote with 8 parameters with locked])
+	LB_LINUX_TRY_COMPILE([
+	#include <linux/mm.h>
+	],[
+		get_user_pages_remote(NULL, NULL, 0, 0, 0, NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_REMOTE_8_PARAMS_W_LOCKED, 1,
+			[get_user_pages_remote is defined with 8 parameters with locked])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops has *ndo_get_stats64 that returns void])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		void get_stats_64(struct net_device *dev,
+						  struct rtnl_link_stats64 *storage)
+		{
+			return;
+		}
+	],[
+		struct net_device_ops netdev_ops;
+
+		netdev_ops.ndo_get_stats64 = get_stats_64;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_STATS64_RET_VOID, 1,
+			  [ndo_get_stats64 is defined and returns void])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has function scsi_internal_device_block])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		scsi_internal_device_block(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_DEVICE_SCSI_INTERNAL_DEVICE_BLOCK, 1,
+			[scsi_device.h has function scsi_internal_device_block])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
