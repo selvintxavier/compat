@@ -2563,21 +2563,6 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if mm.h get_user_pages has 6 params])
-	LB_LINUX_TRY_COMPILE([
-		#include <linux/mm.h>
-	],[
-		get_user_pages(0, 0, 0, 0, NULL, NULL);
-
-		return 0;
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_GET_USER_PAGES_6_PARAMS, 1,
-			  [get_user_pages has 6 params])
-	],[
-		AC_MSG_RESULT(no)
-	])
-
 	AC_MSG_CHECKING([if mm.h get_user_pages_remote])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/mm.h>
