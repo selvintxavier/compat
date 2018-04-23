@@ -4747,6 +4747,19 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if linux/sched/task.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched/task.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_SCHED_TASK_H, 1,
+			  [linux/sched/task.h is exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 ])
 #
 # COMPAT_CONFIG_HEADERS

@@ -7,16 +7,8 @@
 #include "../../compat/config.h"
 
 #include <linux/version.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0))
 #include <linux/kconfig.h>
 #include <linux/if.h>
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
-#include <linux/kconfig.h>
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,33))
-#include <generated/autoconf.h>
-#else
-#include <linux/autoconf.h>
-#endif
 #include <linux/compat_autoconf.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -49,25 +41,6 @@ void backport_dependency_symbol(void);
  * code introduced for *that* kernel revision.
  */
 
-#include <linux/compat-2.6.32.h>
-#include <linux/compat-2.6.33.h>
-#include <linux/compat-2.6.34.h>
-#include <linux/compat-2.6.35.h>
-#include <linux/compat-2.6.36.h>
-#include <linux/compat-2.6.37.h>
-#include <linux/compat-2.6.38.h>
-#include <linux/compat-2.6.39.h>
-#include <linux/compat-3.0.h>
-#include <linux/compat-3.1.h>
-#include <linux/compat-3.2.h>
-#include <linux/compat-3.3.h>
-#include <linux/compat-3.4.h>
-#include <linux/compat-3.5.h>
-#include <linux/compat-3.6.h>
-#include <linux/compat-3.7.h>
-#include <linux/compat-3.8.h>
-#include <linux/compat-3.9.h>
-#include <linux/compat-3.10.h>
 #include <linux/compat-3.11.h>
 #include <linux/compat-3.12.h>
 #include <linux/compat-3.13.h>

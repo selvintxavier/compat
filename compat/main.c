@@ -49,14 +49,6 @@ EXPORT_SYMBOL_GPL(backport_dependency_symbol);
 
 static int __init backport_init(void)
 {
-	int err;
-
-	err = backport_system_workqueue_create();
-	if (err) {
-		pr_warn("backport_system_workqueue_create() failed\n");
-		return err;
-	}
-
 	printk(KERN_INFO
 	       COMPAT_PROJECT " backport release: "
 	       COMPAT_VERSION
@@ -73,8 +65,6 @@ module_init(backport_init);
 
 static void __exit backport_exit(void)
 {
-	backport_system_workqueue_destroy();
-
         return;
 }
 module_exit(backport_exit);
