@@ -1,0 +1,4 @@
+config COMPAT_RDMA
+	tristate "Compat layer for RDMA"
+	---help---
+	  Provides compat layer to support older kernel versions
