@@ -4760,6 +4760,126 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netlink.h has struct netlink_ext_ack])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netlink.h>
+	],[
+		struct netlink_ext_ack x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETLINK_EXT_ACK, 1,
+			  [struct netlink_ext_ack is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if device.h struct device has dma_ops])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/device.h>
+	],[
+		struct device devx = {
+			.dma_ops = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEVICE_DMA_OPS, 1,
+			  [struct device has dma_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if rtnetlink.h has net_rwsem])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/rtnetlink.h>
+		#include <linux/rwsem.h>
+	],[
+		down_read(&net_rwsem);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_RWSEM, 1,
+			[ net_rwsem is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netlink.h nla_parse takes 6 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/netlink.h>
+	],[
+		nla_parse(NULL, 0, NULL, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NLA_PARSE_6_PARAMS, 1,
+			  [nla_parse takes 6 parameters])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/netlink.h has nla_put_u64_64bit])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/netlink.h>
+	],[
+		nla_put_u64_64bit(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NLA_PUT_U64_64BIT, 1,
+			  [nla_put_u64_64bit is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/sched/task.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched/task.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCHED_TASK_H, 1,
+			  [linux/sched/task.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/mm.h has get_user_pages_longterm])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		get_user_pages_longterm(0, 0, 0, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_USER_PAGES_LONGTERM, 1,
+			[get_user_pages_longterm is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if rt6_lookup has 6 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/ip6_route.h>
+	],[
+		rt6_lookup(NULL, NULL, NULL, 0, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RT6_LOOKUP_6_PARAMS, 1,
+			  [rt6_lookup has 6 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
