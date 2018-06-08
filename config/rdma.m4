@@ -5718,6 +5718,89 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if route.h has ip4_dst_hoplimit])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/route.h>
+	],[
+		ip4_dst_hoplimit(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IP4_DST_HOPLIMIT, 1,
+		[ip4_dst_hoplimit is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	LB_CHECK_SYMBOL_EXPORT([irq_to_desc],
+		[kernel/irq/irqdesc.c],
+		[AC_DEFINE(HAVE_IRQ_TO_DESC_EXPORTED, 1,
+			[irq_to_desc is exported by the kernel])],
+	[])
+
+	AC_MSG_CHECKING([if struct net_device_ops_extended has ndo_xdp])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops_extended netdev_ops_extended = {
+			.ndo_xdp = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_XDP_EXTENDED, 1,
+			  [extended ndo_xdp is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdev_features.h has NETIF_F_RXALL])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdev_features.h>
+	],[
+		netdev_features_t rxfcs = NETIF_F_RXALL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_F_RXALL, 1,
+			[NETIF_F_RXALL is defined in netdev_features.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdev_features.h has NETIF_F_RXFCS])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdev_features.h>
+	],[
+		netdev_features_t rxfcs = NETIF_F_RXFCS;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_F_RXFCS, 1,
+			[NETIF_F_RXFCS is defined in netdev_features.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if vxlan.h has vxlan_features_check])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/vxlan.h>
+	],[
+		vxlan_features_check(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_VXLAN_FEATURES_CHECK, 1,
+			  [vxlan_features_check is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
