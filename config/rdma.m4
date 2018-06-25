@@ -5801,6 +5801,79 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if net/tcp.h tcp_parse_options has 5 parameters])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tcp.h>
+	],[
+		tcp_parse_options(NULL, NULL, NULL, 0, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCP_PARSE_OPTIONS_5_PARAMETERS, 1,
+			  [tcp_parse_options_5_parameters is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/pkt_cls.h has tc_cls_can_offload_and_chain0])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		tc_cls_can_offload_and_chain0(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_CLS_CAN_OFFLOAD_AND_CHAIN0, 1,
+			  [tc_cls_can_offload_and_chain0 is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/rhashtable.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/rhashtable.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_RHASHTABLE_H, 1,
+			  [linux/rhashtable.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_mirred.h has tcf_mirred_dev])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_mirred.h>
+	],[
+		tcf_mirred_dev(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_MIRRED_DEV, 1,
+			  [tcf_mirred_dev is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_gact.h has is_tcf_gact_ok])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_gact.h>
+	],[
+		is_tcf_gact_ok(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IS_TCF_GACT_OK, 1,
+			  [is_tcf_gact_ok is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
