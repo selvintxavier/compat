@@ -5239,6 +5239,8 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_DEFINE(HAVE_XDP_RXQ_INFO, 1,
 			  [struct xdp_rxq_info is defined])
 	],[
+		AC_MSG_RESULT(no)
+	])
 
 	AC_MSG_CHECKING([if struct net_device has min/max])
 	LB_LINUX_TRY_COMPILE([
