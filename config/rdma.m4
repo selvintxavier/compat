@@ -219,6 +219,24 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if time.h has time64_to_tm])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/time.h>
+	],[
+		struct tm tm;
+		time64_t now = 0;
+
+		time64_to_tm(now, 0, &tm);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TIME64_TO_TM, 1,
+			  [time64_to_tm is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if svc_xprt_class has xcl_ident])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/sunrpc/xprt.h>
@@ -5149,6 +5167,19 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if net_dim.h exist])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/net_dim.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NET_DIM_H, 1,
+			  [linux/net_dim.h exist])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if netdevice.h has TC_SETUP_QDISC_MQPRIO])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -5160,6 +5191,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_TC_SETUP_QDISC_MQPRIO, 1,
 			  [TC_SETUP_QDISC_MQPRIO is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has TC_SETUP_BLOCK])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		enum tc_setup_type x = TC_SETUP_BLOCK;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_SETUP_BLOCK, 1,
+			  [TC_SETUP_BLOCK is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -5179,6 +5225,20 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if struct xdp_rxq_info exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/xdp.h>
+	],[
+		struct xdp_rxq_info xdp_rxq_inf;
+		xdp_rxq_inf = xdp_rxq_inf;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XDP_RXQ_INFO, 1,
+			  [struct xdp_rxq_info is defined])
+	],[
 
 	AC_MSG_CHECKING([if struct net_device has min/max])
 	LB_LINUX_TRY_COMPILE([
