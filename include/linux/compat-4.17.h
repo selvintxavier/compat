@@ -1,0 +1,23 @@
+#ifndef LINUX_4_17_COMPAT_H
+#define LINUX_4_17_COMPAT_H
+
+#include <linux/version.h>
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,17,0))
+
+#ifndef PFC_STORM_PREVENTION_AUTO
+#define PFC_STORM_PREVENTION_AUTO	0xffff
+#endif
+
+#ifndef PFC_STORM_PREVENTION_DISABLE
+#define PFC_STORM_PREVENTION_DISABLE	0
+#endif
+
+#include <linux/ethtool.h>
+#ifndef ETHTOOL_PFC_PREVENTION_TOUT
+#define ETHTOOL_PFC_PREVENTION_TOUT (ETHTOOL_TX_COPYBREAK + 1)
+#endif
+
+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(4,17,0)) */
+
+#endif /* LINUX_4_17_COMPAT_H */

@@ -3180,6 +3180,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ifla_vf_stats has rx_dropped])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_link.h>
+	],[
+		struct ifla_vf_stats stat = {
+			.rx_dropped = 0,
+			};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IFLA_VF_STATS_RX_DROPPED, 1,
+			  [struct ifla_vf_stats has rx_dropped])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct net_device_ops has ndo_set_vf_guid])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -3242,6 +3259,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_FILTER_XDP, 1,
 			  [filter.h has XDP])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct xdp_buff has rxq])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/filter.h>
+	],[
+		struct xdp_buff x = {
+			.rxq = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XDP_BUFF_RXQ, 1,
+			  [struct xdp_buff has rxq])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -3515,6 +3549,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if if_link.h has IFLA_VF_IB_NODE_PORT_GUID])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/if_link.h>
+	],[
+		int type = IFLA_VF_IB_NODE_GUID;
+
+		type = IFLA_VF_IB_PORT_GUID;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IFLA_VF_IB_NODE_PORT_GUID, 1,
+			  [trust is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if skbuff.h skb_shared_info has UNION tx_flags])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/skbuff.h>
@@ -3662,6 +3713,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IS_TCF_MIRRED_REDIRECT, 1,
 			  [is_tcf_mirred_redirect is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_mirred.h has tcf_mirred_dev])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_mirred.h>
+	],[
+		tcf_mirred_dev(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_MIRRED_DEV, 1,
+			  [tcf_mirred_dev is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -4475,7 +4541,24 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
-	AC_MSG_CHECKING([if mm has register_netdevice_notifier_rh])
+	AC_MSG_CHECKING([if netdevice.h has struct netdev_notifier_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct netdev_notifier_info x = {
+			.dev = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_NOTIFIER_INFO, 1,
+			  [struct netdev_notifier_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has register_netdevice_notifier_rh])
 	LB_LINUX_TRY_COMPILE([
 	#include <linux/netdevice.h>
 	],[
@@ -4563,6 +4646,23 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_NDO_SET_VF_VLAN, 1,
 			  [ndo_set_vf_vlan is defined in net_device_ops])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops has ndo_change_mtu_rh74])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device_ops netdev_ops = {
+			.ndo_change_mtu_rh74 = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_CHANGE_MTU_RH74, 1,
+			  [ndo_change_mtu_rh74 is defined in net_device_ops])
 	],[
 		AC_MSG_RESULT(no)
 	])
@@ -5936,6 +6036,279 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if skbuff.h has build_skb])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		 build_skb(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BUILD_SKB, 1,
+			  [build_skb is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if include/net/devlink.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/devlink.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEVLINK_H, 1,
+			  [include/net/devlink.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net_device_ops_extended has ndo_get_phys_port_id])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int get_phys_port_name(struct net_device *dev,
+				       char *name, size_t len)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops_extended netdev_ops;
+
+		netdev_ops.ndo_get_phys_port_name = get_phys_port_name;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_GET_PHYS_PORT_NAME_EXTENDED, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device_ops ndo_vlan_rx_add_vid has 2 parameters and returns int])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		int vlan_rx_add_vid(struct net_device *dev, u16 vid)
+		{
+			return 0;
+		}
+	],[
+		struct net_device_ops netdev_ops = {
+			.ndo_vlan_rx_add_vid = vlan_rx_add_vid,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NDO_RX_ADD_VID_HAS_2_PARAMS_RET_INT, 1,
+			  [ndo_vlan_rx_add_vid has 2 parameters and returns int])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdev_extended has wanted_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev = NULL;
+
+		netdev_extended(dev)->wanted_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_EXTENDED_WANTED_FEATURES, 1,
+			  [ is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has IFF_UNICAST_FLT])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		int x = IFF_UNICAST_FLT;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_IFF_UNICAST_FLT, 1,
+			  [IFF_UNICAST_FLT is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct net_device has wanted_features])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device dev;
+		dev.wanted_features = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_WANTED_FEATURES, 1,
+			  [wanted_features is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if dcbnl.h has struct ieee_pfc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <net/dcbnl.h>
+	],[
+		struct ieee_pfc x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_STRUCT_IEEE_PFC, 1,
+			  [ieee_pfc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct tc_to_netdev has egress_dev])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct tc_to_netdev x = {
+			.egress_dev = false,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_TO_NETDEV_EGRESS_DEV, 1,
+			  [struct tc_to_netdev has egress_dev])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct tc_to_netdev has tc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct tc_to_netdev x;
+		x.tc = 0;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TC_TO_NETDEV_TC, 1,
+			  [struct tc_to_netdev has tc])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/bpf_trace has trace_xdp_exception])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/bpf_trace.h>
+	],[
+		trace_xdp_exception(NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TRACE_XDP_EXCEPTION, 1,
+			  [trace_xdp_exception is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if filter.h has struct xdp_buff])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/filter.h>
+	],[
+		struct xdp_buff d = {
+			.data = NULL,
+			.data_end = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XDP_BUFF, 1,
+			  [xdp is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if filter.h struct xdp_buff has data_hard_start])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/filter.h>
+	],[
+		struct xdp_buff d = {
+			.data_hard_start = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XDP_BUFF_DATA_HARD_START, 1,
+			  [xdp_buff data_hard_start is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if filter.h has xdp_set_data_meta_invalid])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/filter.h>
+	],[
+		struct xdp_buff d;
+		xdp_set_data_meta_invalid(&d);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_XDP_SET_DATA_META_INVALID, 1,
+			  [xdp_set_data_meta_invalid is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/bpf.h has bpf_prog_sub])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/bpf.h>
+	],[
+		bpf_prog_sub(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BPF_PROG_SUB, 1,
+			  [bpf_prog_sub is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has enum netdev_lag_tx_type])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		enum netdev_lag_tx_type x;
+		x = 0;
+
+		return x;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LAG_TX_TYPE, 1,
+			  [enum netdev_lag_tx_type is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	LB_CHECK_SYMBOL_EXPORT([bpf_prog_inc],
+		[kernel/bpf/syscall.c],
+		[AC_DEFINE(HAVE_BPF_PROG_INC_EXPORTED, 1,
+			[bpf_prog_inc is exported by the kernel])],
+	[])
 ])
 #
 # COMPAT_CONFIG_HEADERS

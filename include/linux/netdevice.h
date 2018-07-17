@@ -16,6 +16,21 @@
 #define ndo_bpf		ndo_xdp
 #endif
 
+static inline const char *netdev_reg_state(const struct net_device *dev)
+{
+	switch (dev->reg_state) {
+	case NETREG_UNINITIALIZED: return " (uninitialized)";
+	case NETREG_REGISTERED: return "";
+	case NETREG_UNREGISTERING: return " (unregistering)";
+	case NETREG_UNREGISTERED: return " (unregistered)";
+	case NETREG_RELEASED: return " (released)";
+	case NETREG_DUMMY: return " (dummy)";
+	}
+
+	WARN_ONCE(1, "%s: unknown reg_state %d\n", dev->name, dev->reg_state);
+	return " (unknown)";
+}
+
 #ifndef HAVE_TC_SETUP_QDISC_MQPRIO
 #define TC_SETUP_QDISC_MQPRIO TC_SETUP_MQPRIO
 
@@ -47,9 +62,10 @@ do {								\
 	netdev_level_once(KERN_INFO, dev, fmt, ##__VA_ARGS__)
 
 
-#define netdev_WARN_ONCE(dev, condition, format, arg...)		\
-	WARN_ONCE(1, "netdevice: %s%s\n" format, netdev_name(dev)	\
+#define netdev_WARN_ONCE(dev, format, args...)				\
+	WARN_ONCE(1, "netdevice: %s%s: " format, netdev_name(dev),	\
 		  netdev_reg_state(dev), ##args)
+
 #endif /* netdev_WARN_ONCE */
 #endif
 
