@@ -6,6 +6,10 @@
 
 #include_next <linux/netdevice.h>
 
+#ifdef HAVE_REGISTER_NETDEVICE_NOTIFIER_RH
+#define register_netdevice_notifier register_netdevice_notifier_rh
+#define unregister_netdevice_notifier unregister_netdevice_notifier_rh
+#endif
 
 #if IS_ENABLED(CONFIG_VXLAN) && (defined(HAVE_NDO_ADD_VXLAN_PORT) || defined(HAVE_NDO_UDP_TUNNEL_ADD))
 #define HAVE_KERNEL_WITH_VXLAN_SUPPORT_ON
@@ -33,6 +37,7 @@ static inline const char *netdev_reg_state(const struct net_device *dev)
 
 #ifndef HAVE_TC_SETUP_QDISC_MQPRIO
 #define TC_SETUP_QDISC_MQPRIO TC_SETUP_MQPRIO
+#endif
 
 #ifndef netdev_WARN_ONCE
 
@@ -67,6 +72,5 @@ do {								\
 		  netdev_reg_state(dev), ##args)
 
 #endif /* netdev_WARN_ONCE */
-#endif
 
 #endif	/* _COMPAT_LINUX_NETDEVICE_H */
