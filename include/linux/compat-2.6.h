@@ -55,6 +55,7 @@ void backport_dependency_symbol(void);
 #include <linux/compat-4.1.h>
 #include <linux/compat-4.5.h>
 #include <linux/compat-4.9.h>
+#include <linux/compat-4.16.h>
 #include <linux/compat-4.17.h>
 
 #endif /* CONFIG_COMPAT_RDMA */

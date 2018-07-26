@@ -6309,6 +6309,74 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		[AC_DEFINE(HAVE_BPF_PROG_INC_EXPORTED, 1,
 			[bpf_prog_inc is exported by the kernel])],
 	[])
+
+	AC_MSG_CHECKING([if linux/inet.h inet_pton_with_scope])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/inet.h>
+	],[
+		inet_pton_with_scope(NULL, 0, NULL, NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INET_PTON_WITH_SCOPE, 1,
+			[inet_pton_with_scope is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has blist_flags_t])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+    ],[
+		blist_flags_t x = 0;
+
+		return 0;
+    ],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_BLIST_FLAGS_T, 1,
+			[blist_flags_t is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h struct scsi_device has member state_mutex])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mutex.h>
+		#include <scsi/scsi_device.h>
+	],[
+		struct scsi_device sdev;
+		mutex_init(&sdev.state_mutex);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCSI_DEVICE_STATE_MUTEX, 1,
+			  [scsi_device.h struct scsi_device has member state_mutex])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if scsi_device.h has enum scsi_scan_mode])
+	LB_LINUX_TRY_COMPILE([
+		#include <scsi/scsi_device.h>
+	],[
+		enum scsi_scan_mode xx = SCSI_SCAN_INITIAL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ENUM_SCSI_SCAN_MODE, 1,
+			  [enum scsi_scan_mode is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	LB_CHECK_SYMBOL_EXPORT([kobj_ns_drop],
+		[lib/kobject.c],
+		[AC_DEFINE(HAVE_KOBJ_NS_DROP_EXPORTED, 1,
+			[kobj_ns_drop is exported by the kernel])],
+	[])
 ])
 #
 # COMPAT_CONFIG_HEADERS

@@ -20,6 +20,11 @@
 #define ndo_bpf		ndo_xdp
 #endif
 
+#ifndef HAVE_TC_SETUP_QDISC_MQPRIO
+#define TC_SETUP_QDISC_MQPRIO TC_SETUP_MQPRIO
+#endif
+
+#ifndef netdev_WARN_ONCE
 static inline const char *netdev_reg_state(const struct net_device *dev)
 {
 	switch (dev->reg_state) {
@@ -35,11 +40,6 @@ static inline const char *netdev_reg_state(const struct net_device *dev)
 	return " (unknown)";
 }
 
-#ifndef HAVE_TC_SETUP_QDISC_MQPRIO
-#define TC_SETUP_QDISC_MQPRIO TC_SETUP_MQPRIO
-#endif
-
-#ifndef netdev_WARN_ONCE
 
 #define netdev_level_once(level, dev, fmt, ...)			\
 do {								\
