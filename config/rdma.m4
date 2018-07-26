@@ -6304,6 +6304,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if netdevice.h has netdev_reg_state])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		netdev_reg_state(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_REG_STATE, 1,
+			  [netdev_reg_state is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	LB_CHECK_SYMBOL_EXPORT([bpf_prog_inc],
 		[kernel/bpf/syscall.c],
 		[AC_DEFINE(HAVE_BPF_PROG_INC_EXPORTED, 1,

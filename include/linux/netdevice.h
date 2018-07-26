@@ -25,6 +25,8 @@
 #endif
 
 #ifndef netdev_WARN_ONCE
+
+#ifndef HAVE_NETDEV_REG_STATE
 static inline const char *netdev_reg_state(const struct net_device *dev)
 {
 	switch (dev->reg_state) {
@@ -39,6 +41,7 @@ static inline const char *netdev_reg_state(const struct net_device *dev)
 	WARN_ONCE(1, "%s: unknown reg_state %d\n", dev->name, dev->reg_state);
 	return " (unknown)";
 }
+#endif
 
 
 #define netdev_level_once(level, dev, fmt, ...)			\
