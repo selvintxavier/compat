@@ -6392,6 +6392,202 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		[AC_DEFINE(HAVE_KOBJ_NS_DROP_EXPORTED, 1,
 			[kobj_ns_drop is exported by the kernel])],
 	[])
+
+	AC_MSG_CHECKING([if linux/hashtable.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/hashtable.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_HASHTABLE_H, 1,
+			  [linux/hashtable.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if list.h hlist_for_each_entry has 3 params])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/list.h>
+
+		struct test_node {
+			struct hlist_node hlist;
+		};
+	],[
+		struct test_node *hn;
+		struct hlist_head *hash;
+		hlist_for_each_entry(hn, hash, hlist);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_HLIST_FOR_EACH_ENTRY_3_PARAMS, 1,
+			  [hlist_for_each_entry has 3 params])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	# this checker will test if the function exist AND gets const
+	# otherwise it will fail.
+	AC_MSG_CHECKING([if if_vlan.h has is_vlan_dev get const])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+		#include <linux/if_vlan.h>
+	],[
+		const struct net_device *dev;
+		is_vlan_dev(dev);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IS_VLAN_DEV_CONST, 1,
+			  [is_vlan_dev get const])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/security.h has register_lsm_notifier])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/security.h>
+	],[
+		register_lsm_notifier(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_REGISTER_LSM_NOTIFIER, 1,
+			  [linux/security.h has register_lsm_notifier])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if refcount.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/refcount.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_REFCOUNT, 1,
+			  [refcount.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if slab.h has kcalloc_node])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/slab.h>
+	],[
+		kcalloc_node(0, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KCALLOC_NODE, 1,
+			  [kcalloc_node is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h has kvzalloc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		kvzalloc(0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KVZALLOC, 1,
+			[kvzalloc is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h has kvmalloc_array])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		kvmalloc_array(0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_KVMALLOC_ARRAY, 1,
+			[kvmalloc_array is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h has kvmalloc_node])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		kvmalloc_node(0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KVMALLOC_NODE, 1,
+			[kvmalloc_node is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if mm.h has kvzalloc_node])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/mm.h>
+	],[
+		kvzalloc_node(0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KVZALLOC_NODE, 1,
+			[kvzalloc_node is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/cdev.h has cdev_set_parent])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/cdev.h>
+	],[
+		cdev_set_parent(NULL, NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CDEV_SET_PARENT, 1,
+			  [linux/cdev.h has cdev_set_parent])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/sched/signal.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched/signal.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCHED_SIGNAL_H, 1,
+			  [linux/sched/signal.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/sched/mm.h exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/sched/mm.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SCHED_MM_H, 1,
+			  [linux/sched/mm.h exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
