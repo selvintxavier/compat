@@ -6588,6 +6588,35 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if linux/bpf_trace exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/bpf.h>
+		#include <linux/bpf_trace.h>
+	],[
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_BPF_TRACE_H, 1,
+			  [linux/bpf_trace exists])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/net_tstamp.h has HWTSTAMP_FILTER_NTP_ALL])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/net_tstamp.h>
+	],[
+		int x = HWTSTAMP_FILTER_NTP_ALL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_HWTSTAMP_FILTER_NTP_ALL, 1,
+			  [HWTSTAMP_FILTER_NTP_ALL is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
