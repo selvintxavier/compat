@@ -6617,6 +6617,260 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if linux/pci.h has pci_irq_vector, pci_free_irq_vectors, pci_alloc_irq_vectors])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		pci_irq_vector(NULL, 0);
+		pci_free_irq_vectors(NULL);
+		pci_alloc_irq_vectors(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCI_IRQ_API, 1,
+			[linux/pci.h has pci_irq_vector, pci_free_irq_vectors, pci_alloc_irq_vectors])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct devlink_ops has eswitch_encap_mode_set/get])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/devlink.h>
+	],[
+		struct devlink_ops dlops = {
+			.eswitch_encap_mode_set = NULL,
+			.eswitch_encap_mode_get = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEVLINK_HAS_ESWITCH_ENCAP_MODE_SET, 1,
+			  [eswitch_encap_mode_set/get is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct devlink_ops has eswitch_inline_mode_get/set])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/devlink.h>
+	],[
+		struct devlink_ops dlops = {
+			.eswitch_inline_mode_get = NULL,
+			.eswitch_inline_mode_set = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEVLINK_HAS_ESWITCH_INLINE_MODE_GET_SET, 1,
+			  [eswitch_inline_mode_get/set is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct devlink_ops has eswitch_mode_get/set])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/devlink.h>
+	],[
+		struct devlink_ops dlops = {
+			.eswitch_mode_get = NULL,
+			.eswitch_mode_set = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DEVLINK_HAS_ESWITCH_MODE_GET_SET, 1,
+			  [eswitch_mode_get/set is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if napi_complete_done returns value])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+	],[
+		if (napi_complete_done(NULL, 0))
+			return;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NAPI_COMPLETE_DONE_RET_VALUE, 1,
+			  [napi_complete_done returns value])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if skbuff.h has skb_put_zero])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		skb_put_zero(NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_PUT_ZERO, 1,
+			  [skb_put_zero is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if flow_dissector.h enum flow_dissector_key_keyid has FLOW_DISSECTOR_KEY_TCP])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/flow_dissector.h>
+	],[
+		enum flow_dissector_key_id keyid = FLOW_DISSECTOR_KEY_TCP;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FLOW_DISSECTOR_KEY_TCP, 1,
+			  [FLOW_DISSECTOR_KEY_TCP is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_pedit.h has tcf_pedit_nkeys])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_pedit.h>
+	],[
+		const struct tc_action xx;
+		tcf_pedit_nkeys(&xx);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_PEDIT_NKEYS, 1,
+			  [tcf_pedit_nkeys is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_pedit.h struct tcf_pedit has member tcfp_keys_ex])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_pedit.h>
+	],[
+		struct tcf_pedit x = {
+			.tcfp_keys_ex = NULL,
+		};
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_PEDIT_TCFP_KEYS_EX, 1,
+			  [struct tcf_pedit has member tcfp_keys_ex])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if tc_vlan.h has tcf_vlan_push_prio])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_vlan.h>
+	],[
+		tcf_vlan_push_prio(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_VLAN_PUSH_PRIO, 1,
+			  [tcf_vlan_push_prio is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_csum.h has TCA_CSUM_UPDATE_FLAG_IPV4HDR])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_csum.h>
+	],[
+		int x = TCA_CSUM_UPDATE_FLAG_IPV4HDR;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCA_CSUM_UPDATE_FLAG_IPV4HDR, 1,
+			  [TCA_CSUM_UPDATE_FLAG_IPV4HDR is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/pkt_cls.h has tcf_exts_has_actions])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		struct tcf_exts exts;
+		tcf_exts_has_actions(&exts);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_EXTS_HAS_ACTIONS, 1,
+			  [tcf_exts_has_actions is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/tc_act/tc_tunnel_key.h has tcf_tunnel_info])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/tc_act/tc_tunnel_key.h>
+	],[
+		const struct tc_action xx;
+		tcf_tunnel_info(&xx);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_TUNNEL_INFO, 1,
+			  [tcf_tunnel_info is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+	AC_MSG_CHECKING([if flow_dissector.h enum flow_dissector_key_keyid has FLOW_DISSECTOR_KEY_IP])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/flow_dissector.h>
+	],[
+		enum flow_dissector_key_id keyid = FLOW_DISSECTOR_KEY_IP;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FLOW_DISSECTOR_KEY_IP, 1,
+			  [FLOW_DISSECTOR_KEY_IP is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if flow_dissector.h enum flow_dissector_key_keyid has FLOW_DISSECTOR_KEY_VLAN])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/flow_dissector.h>
+	],[
+		enum flow_dissector_key_id keyid = FLOW_DISSECTOR_KEY_VLAN;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_FLOW_DISSECTOR_KEY_VLAN, 1,
+			  [FLOW_DISSECTOR_KEY_VLAN is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if net/pkt_cls.h has tcf_exts_stats_update])
+	LB_LINUX_TRY_COMPILE([
+		#include <net/pkt_cls.h>
+	],[
+		tcf_exts_stats_update(NULL, 0, 0, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCF_EXTS_STATS_UPDATE, 1,
+			  [tcf_exts_stats_update is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
