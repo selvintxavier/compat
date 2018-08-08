@@ -6871,6 +6871,98 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_walk_all_upper_dev_rcu])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+
+		struct upper_list {
+			struct list_head list;
+			struct net_device *upper;
+		};
+
+		static int netdev_upper_walk(struct net_device *upper, void *data) {
+			return 0;
+		}
+	],[
+		struct net_device *ndev;
+		struct list_head upper_list;
+
+		netdev_walk_all_upper_dev_rcu(ndev, netdev_upper_walk, &upper_list);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_WALK_ALL_UPPER_DEV_RCU, 1,
+			  [netdev_walk_all_upper_dev_rcu is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if netdevice.h has netdev_has_upper_dev_all_rcu])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdevice.h>
+	],[
+		struct net_device *dev;
+		struct net_device *upper;
+
+		netdev_has_upper_dev_all_rcu(dev, upper);
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETDEV_HAS_UPPER_DEV_ALL_RCU, 1,
+			  [netdev_has_upper_dev_all_rcu is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if page_ref.h has page_ref_count/add/sub/inc])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/page_ref.h>
+	],[
+		page_ref_count(NULL);
+		page_ref_add(NULL, 0);
+		page_ref_sub(NULL, 0);
+		page_ref_inc(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PAGE_REF_COUNT_ADD_SUB_INC, 1,
+			  [page_ref_count/add/sub/inc defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if struct netdev_features.h has NETIF_F_GSO_PARTIAL])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/netdev_features.h>
+	],[
+		int x = NETIF_F_GSO_PARTIAL;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NETIF_F_GSO_PARTIAL, 1,
+			  [NETIF_F_GSO_PARTIAL is defined in netdev_features.h])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if  struct rhltable exists])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/rhashtable.h>
+	],[
+		struct rhltable x;
+		x = x;
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RHLTABLE, 1,
+			  [struct rhltable is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
