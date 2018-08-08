@@ -6963,6 +6963,22 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING([if libiscsi.h has iscsi_eh_cmd_timed_out])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/blkdev.h>
+		#include <scsi/libiscsi.h>
+	],[
+		iscsi_eh_cmd_timed_out(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISCSI_EH_CMD_TIMED_OUT, 1,
+			[iscsi_eh_cmd_timed_out is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 ])
 #
 # COMPAT_CONFIG_HEADERS
