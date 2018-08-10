@@ -1,5 +1,5 @@
-#ifndef _MLNX_LINUX_REFCOUNT_H
-#define _MLNX_LINUX_REFCOUNT_H
+#ifndef __COMPAT_LINUX_REFCOUNT_H
+#define __COMPAT_LINUX_REFCOUNT_H
 
 #include "../../compat/config.h"
 
@@ -22,4 +22,4 @@
 #endif /* HAVE_REFCOUNT */
 
 
-#endif /* _MLNX_LINUX_REFCOUNT_H */
+#endif /* __COMPAT_LINUX_REFCOUNT_H */

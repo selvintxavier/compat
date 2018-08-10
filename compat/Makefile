@@ -12,3 +12,8 @@ compat-$(CONFIG_COMPAT_KERNEL_3_18) += compat-3.18.o
 compat-$(CONFIG_COMPAT_KERNEL_4_0) += compat-4.0.o
 compat-$(CONFIG_COMPAT_KERNEL_4_1) += compat-4.1.o
 compat-$(CONFIG_COMPAT_KERNEL_4_16) += compat-4.16.o
+
+compat-y += uuid.o
+compat-y += rhashtable.o
+
+compat-y += ../block/blk-mq-rdma.o
