@@ -276,6 +276,24 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if struct ethtool_ops has get/set_fec_param])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/ethtool.h>
+	],[
+		const struct ethtool_ops en_ethtool_ops = {
+			.get_fec_param = NULL,
+			.set_fec_param = NULL,
+		};
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GET_SET_FEC, 1,
+			  [get/set_fec_param is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if struct net_device has dev_port])
 	LB_LINUX_TRY_COMPILE([
 		#include <linux/netdevice.h>
@@ -6581,6 +6599,21 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING([if skbuff.h has skb_put_data])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/skbuff.h>
+	],[
+		skb_put_data(NULL, NULL, 0);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SKB_PUT_DATA, 1,
+			  [skb_put_data is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING([if flow_dissector.h enum flow_dissector_key_keyid has FLOW_DISSECTOR_KEY_TCP])
 	LB_LINUX_TRY_COMPILE([
 		#include <net/flow_dissector.h>
@@ -8315,6 +8348,36 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IP4_DST_HOPLIMIT, 1,
 		[ip4_dst_hoplimit is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/kref.h has kref_read])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/kref.h>
+	],[
+		kref_read(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_KREF_READ, 1,
+			  [kref_read is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING([if linux/pci.h has pcie_relaxed_ordering_enabled])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/pci.h>
+	],[
+		pcie_relaxed_ordering_enabled(NULL);
+
+		return 0;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_PCIE_RELAXED_ORDERING_ENABLED, 1,
+			[pcie_relaxed_ordering_enabled is defined])
 	],[
 		AC_MSG_RESULT(no)
 	])
