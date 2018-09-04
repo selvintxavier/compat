@@ -2379,6 +2379,22 @@ AC_DEFUN([LINUX_CONFIG_COMPAT],
 	],[
 		AC_MSG_RESULT(no)
 	])
+	
+	AC_MSG_CHECKING([if linux/dma-mapping.h has dma_map_page_attrs])
+	LB_LINUX_TRY_COMPILE([
+		#include <linux/dma-mapping.h>
+	],[
+		dma_addr_t addr;
+		addr = dma_map_page_attrs(NULL, NULL, 0, 0, 0, 0);
+		return addr;
+
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_DMA_MAP_PAGE_ATTRS, 1,
+			  [dma_map_page_attrs is defined])
+	],[
+		AC_MSG_RESULT(no)
+	])
 
 	AC_MSG_CHECKING([if pci.h has pcie_get_minimum_link])
 	LB_LINUX_TRY_COMPILE([
